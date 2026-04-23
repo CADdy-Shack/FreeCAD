@@ -1,0 +1,14 @@
+Model:
+  name: 'Density'
+  uuid: '454661e5-265b-4320-8e6f-fcf6223ac3af'
+  url: 'https://en.wikipedia.org/wiki/Density'
+  description: 'Density is the ratio of mass to volume of a material'
+  doi: ''
+Properties:
+  density:
+    type: 'Quantity'
+    units: 'kg/m^3'
+    url: 'https://en.wikipedia.org/wiki/Density'
+    description: 'Mass per unit volume'
+    minimum: '0.0'
+    maximum: ''
