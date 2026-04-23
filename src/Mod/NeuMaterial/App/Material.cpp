@@ -3,9 +3,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <random>
-#include <sstream>
-#include <iomanip>
 
 namespace NeuMaterial::App {
 
@@ -16,19 +13,9 @@ namespace NeuMaterial::App {
 Material::Material(std::string name)
     : name_(std::move(name))
 {
-    generateId();
-}
-
-// ---------------------------------------------------------------------------
-// Identity setters
-// ---------------------------------------------------------------------------
-
-void Material::setName(std::string name)
-{
-    name_ = std::move(name);
-    // Re-generate id only if it hasn't been set from a stored file
-    if (id_.empty())
-        generateId();
+    // UUID is intentionally left empty on construction — it must be set
+    // explicitly via setUuid() when loading from YAML or assigned by the
+    // user before calling MaterialStore::addMaterial().
 }
 
 // ---------------------------------------------------------------------------
@@ -37,7 +24,7 @@ void Material::setName(std::string name)
 
 bool Material::isValid() const
 {
-    return !name_.empty();
+    return !name_.empty() && !uuid_.empty();
 }
 
 // ---------------------------------------------------------------------------
@@ -52,13 +39,14 @@ std::string Material::makeSlug(const std::string& name)
     for (const char c : name) {
         if (std::isalnum(static_cast<unsigned char>(c))) {
             slug += static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-        } else if (std::isspace(static_cast<unsigned char>(c)) ||
-                   c == '-' || c == '_') {
+        }
+        else if (std::isspace(static_cast<unsigned char>(c)) ||
+                 c == '-' || c == '_') {
             // Collapse runs of separators to a single underscore
             if (!slug.empty() && slug.back() != '_')
                 slug += '_';
-        }
-        // Strip all other characters
+                 }
+        // All other characters stripped
     }
 
     // Trim trailing underscore
@@ -66,35 +54,6 @@ std::string Material::makeSlug(const std::string& name)
         slug.pop_back();
 
     return slug;
-}
-
-// ---------------------------------------------------------------------------
-// Private helpers
-// ---------------------------------------------------------------------------
-
-void Material::generateId()
-{
-    // Simple UUID-v4-like generator — no external dependency required
-    std::random_device              rd;
-    std::mt19937                    gen(rd());
-    std::uniform_int_distribution<> dis(0, 15);
-    std::uniform_int_distribution<> dis2(8, 11);
-
-    std::ostringstream oss;
-    oss << std::hex;
-
-    for (int i = 0; i < 8;  ++i) oss << dis(gen);
-    oss << '-';
-    for (int i = 0; i < 4;  ++i) oss << dis(gen);
-    oss << "-4";
-    for (int i = 0; i < 3;  ++i) oss << dis(gen);
-    oss << '-';
-    oss << dis2(gen);
-    for (int i = 0; i < 3;  ++i) oss << dis(gen);
-    oss << '-';
-    for (int i = 0; i < 12; ++i) oss << dis(gen);
-
-    id_ = oss.str();
 }
 
 } // namespace NeuMaterial::App
