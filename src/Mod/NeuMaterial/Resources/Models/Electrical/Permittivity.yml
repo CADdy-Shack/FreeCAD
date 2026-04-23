@@ -1,0 +1,15 @@
+Model:
+  name: 'Permittivity'
+  uuid: 'e1b2c4e6-2c3d-4f5e-6a7b-8c9d0e1f2a3b'
+  url: 'https://en.wikipedia.org/wiki/Permittivity'
+  description: 'Permittivity describes how an electric field affects and is affected by a medium'
+  doi: ''
+
+Properties:
+  permittivity:
+    type: 'Quantity'
+    units: 'F/m'
+    url: 'https://en.wikipedia.org/wiki/Permittivity'
+    description: 'Absolute permittivity; measure of electric polarisability'
+    minimum: '0.0'
+    maximum: ''

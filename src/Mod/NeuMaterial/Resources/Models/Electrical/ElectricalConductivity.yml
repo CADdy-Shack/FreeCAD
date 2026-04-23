@@ -1,0 +1,15 @@
+Model:
+  name: 'ElectricalConductivity'
+  uuid: 'c9f0a2c4-0a1b-4d3c-4e5f-6a7b8c9d0e1f'
+  url: 'https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity'
+  description: 'Electrical conductivity measures a material's ability to conduct electric current'
+  doi: ''
+
+Properties:
+  electrical_conductivity:
+    type: 'Quantity'
+    units: 'S/m'
+    url: 'https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity'
+    description: 'Reciprocal of resistivity; measure of how easily current flows'
+    minimum: '0.0'
+    maximum: ''

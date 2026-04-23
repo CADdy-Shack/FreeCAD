@@ -1,0 +1,16 @@
+Model:
+  name: 'Electrical'
+  uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+  url: 'https://en.wikipedia.org/wiki/Electrical_properties_of_materials'
+  description: 'Composite electrical model combining conductivity, resistivity, and permittivity'
+  doi: ''
+
+Inherited:
+  ElectricalConductivity:
+    uuid: 'c9f0a2c4-0a1b-4d3c-4e5f-6a7b8c9d0e1f'
+  Resistivity:
+    uuid: 'd0a1b3d5-1b2c-4e4d-5f6a-7b8c9d0e1f2a'
+  Permittivity:
+    uuid: 'e1b2c4e6-2c3d-4f5e-6a7b-8c9d0e1f2a3b'
+
+Properties:

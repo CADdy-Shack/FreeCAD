@@ -1,0 +1,15 @@
+Model:
+  name: 'YoungsModulus'
+  uuid: 'a1d28a4c-2e3f-4b5c-6d7e-8f9a0b1c2d3e'
+  url: 'https://en.wikipedia.org/wiki/Young%27s_modulus'
+  description: 'Young's modulus describes the stiffness of a material under uniaxial stress'
+  doi: ''
+
+Properties:
+  youngs_modulus:
+    type: 'Quantity'
+    units: 'GPa'
+    url: 'https://en.wikipedia.org/wiki/Young%27s_modulus'
+    description: 'Ratio of uniaxial stress to uniaxial strain (elastic modulus)'
+    minimum: '0.0'
+    maximum: ''

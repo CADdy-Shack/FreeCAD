@@ -1,0 +1,15 @@
+Model:
+  name: 'Resistivity'
+  uuid: 'd0a1b3d5-1b2c-4e4d-5f6a-7b8c9d0e1f2a'
+  url: 'https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity'
+  description: 'Electrical resistivity measures a material's opposition to current flow'
+  doi: ''
+
+Properties:
+  resistivity:
+    type: 'Quantity'
+    units: 'Ohm*m'
+    url: 'https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity'
+    description: 'Intrinsic resistance to current flow per unit length and cross section'
+    minimum: '0.0'
+    maximum: ''

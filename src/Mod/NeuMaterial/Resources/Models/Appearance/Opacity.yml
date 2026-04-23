@@ -1,0 +1,15 @@
+Model:
+  name: 'Opacity'
+  uuid: 'c5f6a8ca-6a7b-4d9c-0e1f-2a3b4c5d6e7f'
+  url: 'https://en.wikipedia.org/wiki/Opacity_(optics)'
+  description: 'Opacity of the material surface; inverse of transparency'
+  doi: ''
+
+Properties:
+  opacity:
+    type: 'Float'
+    units: ''
+    url: 'https://en.wikipedia.org/wiki/Opacity_(optics)'
+    description: '0.0 = fully transparent, 1.0 = fully opaque'
+    minimum: '0.0'
+    maximum: '1.0'
