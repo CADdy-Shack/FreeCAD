@@ -1,0 +1,28 @@
+General:
+    author: 'Michael Cummings'
+    description: 'Aluminium oxide ceramic, 99.5% purity'
+    license: 'CC-BY-4.0'
+    name: 'Alumina (Al₂O₃)'
+    tags: ['ceramic', 'aluminium', 'aluminum oxide']
+    url: 'https://wikipedia.org/wiki/Aluminium_oxide'
+    uuid: '3b4c5d6e-7f8a-4b9c-0d1e-2f3a4b5c6d7e'
+    version: '2.0'
+
+Models:
+    electrical:
+        electrical_conductivity: '1.0e-12 S/m'
+        permittivity: '8.0e-11 F/m'
+        resistivity: '1.0e12 Ohm*m'
+        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    linear_elastic:
+        density: '3900 kg/m^3'
+        poissons_ratio: '0.22'
+        ultimate_strength: '300 MPa'
+        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        youngs_modulus: '380 GPa'
+    thermal:
+        melting_point: '2072 degC'
+        specific_heat: '880 J/kg/K'
+        thermal_conductivity: '30.0 W/m/K'
+        thermal_expansion: '8.1 um/m/K'
+        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'

@@ -1,0 +1,28 @@
+General:
+    author: 'Michael Cummings'
+    description: 'Chromium-molybdenum alloy steel, quenched and tempered'
+    license: 'LGPL-2.1-or-later'
+    name: 'Steel 4140'
+    tags: [ 'Steel', 'Alloy', 'Tempered', 'Quenched', 'Metal', 'Chromium', 'Molybdenum']
+    url: 'https://wikipeda.org/wiki/Steel'
+    uuid: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f'
+    version: '2.0'
+
+Models:
+    electrical:
+        electrical_conductivity: '4600000 S/m'
+        resistivity: '2.2e-7 Ohm*m'
+        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    linear_elastic:
+        density: '7850 kg/m^3'
+        poissons_ratio: '0.28'
+        ultimate_strength: '1020 MPa'
+        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        yield_strength: '655 MPa'
+        youngs_modulus: '210 GPa'
+    thermal:
+        melting_point: '1427 degC'
+        specific_heat: '473 J/kg/K'
+        thermal_conductivity: '42.6 W/m/K'
+        thermal_expansion: '12.3 um/m/K'
+        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'

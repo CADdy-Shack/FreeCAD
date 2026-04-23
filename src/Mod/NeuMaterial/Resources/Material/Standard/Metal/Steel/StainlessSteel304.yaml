@@ -1,0 +1,27 @@
+General:
+    author: 'Michael Cummings'
+    description: 'Austenitic chromium-nickel stainless steel, general purpose'
+    license: 'LGPL-2.1-or-later'
+    name: 'Stainless Steel 304'
+    tags: [ 'metal', 'steel', 'austenitic']
+    url: 'https://wikipeda.org/wiki/Stainless_steel'
+    uuid: '3d4e5f6a-7b8c-4d9e-0f1a-2b3c4d5e6f7a'
+    version: "2.0"
+Models:
+    electrical:
+        electrical_conductivity: '1400000 S/m'
+        resistivity: '7.2e-7 Ohm*m'
+        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    linear_elastic:
+        density: '8000 kg/m^3'
+        poissons_ratio: '0.29'
+        ultimate_strength: '505 MPa'
+        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        yield_strength: '215 MPa'
+        youngs_modulus: '193 GPa'
+    thermal:
+        melting_point: '1400 degC'
+        specific_heat: '500 J/kg/K'
+        thermal_conductivity: '16.2 W/m/K'
+        thermal_expansion: '17.2 um/m/K'
+        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'

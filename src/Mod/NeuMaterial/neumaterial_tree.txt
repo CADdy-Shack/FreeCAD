@@ -1,0 +1,83 @@
+.
+|-- App
+|   |-- CMakeLists.txt
+|   |-- Material.cpp
+|   |-- Material.h
+|   |-- MaterialIO.cpp
+|   |-- MaterialIO.h
+|   |-- MaterialStore.cpp
+|   |-- MaterialStore.h
+|   |-- MaterialValidator.cpp
+|   |-- MaterialValidator.h
+|   |-- NeuMaterialApp.cpp
+|   |-- NeuMaterialApp.h
+|   `-- PreCompiled.h
+|-- CMakeLists.txt
+|-- Gui
+|   |-- CMakeLists.txt
+|   |-- commands
+|   |   |-- cmd_browse_library.py
+|   |   |-- cmd_delete_material.py
+|   |   |-- cmd_duplicate_material.py
+|   |   |-- cmd_edit_material.py
+|   |   |-- cmd_new_material.py
+|   |   `-- __init__.py
+|   |-- NeuMaterialGui.cpp
+|   |-- NeuMaterialGui.h
+|   |-- PreCompiled.h
+|   |-- Resources
+|   |   |-- icons
+|   |   |-- images
+|   |   |-- translations
+|   |   `-- ui
+|   |-- ui
+|   |   |-- __init__.py
+|   |   |-- material_browser.py
+|   |   |-- material_editor.py
+|   |   `-- property_widgets.py
+|   |-- Workbench.cpp
+|   `-- Workbench.h
+|-- InitGui.py
+|-- Init.py
+|-- neumaterial_tree.txt
+`-- Resources
+    |-- Material
+    |   |-- Appearance
+    |   |   |-- Aggregate
+    |   |   |-- Carbon
+    |   |   |-- Ceramic
+    |   |   |-- Composite
+    |   |   |-- Fluid
+    |   |   |-- Glass
+    |   |   |-- Metal
+    |   |   |-- Polymer
+    |   |   `-- Wood
+    |   `-- Standard
+    |       |-- Aggregate
+    |       |-- Carbon
+    |       |-- Ceramic
+    |       |-- Composite
+    |       |-- Fluid
+    |       |-- Glass
+    |       |-- Metal
+    |       |   |-- Alloys
+    |       |   |-- Aluminum
+    |       |   |   `-- aluminum_6061.yaml
+    |       |   |-- Copper
+    |       |   |-- Iron
+    |       |   |-- Nickel
+    |       |   |-- Steel
+    |       |   |   `-- steel_1020.yaml
+    |       |   |-- Tin
+    |       |   `-- Titanium
+    |       |-- Polymer
+    |       |   |-- Elastomer
+    |       |   |-- Natural
+    |       |   |-- Thermoplastic
+    |       |   |   `-- abs.yaml
+    |       |   `-- Thermoset
+    |       `-- Wood
+    |           |-- Composite
+    |           |-- Hard
+    |           `-- Soft
+    `-- Models

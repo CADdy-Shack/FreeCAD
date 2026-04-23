@@ -1,0 +1,27 @@
+General:
+    author: 'Michael Cummings'
+    description: 'Low-expansion borosilicate glass (e.g. Pyrex)'
+    license: 'CC-BY-4.0'
+    name: 'Borosilicate Glass'
+    tags: ['glass', 'low-expansion', 'low-thermal-expansion']
+    url: 'https://en.wikipedia.org/wiki/Borosilicate_glass'
+    uuid: '4c5d6e7f-8a9b-4c0d-1e2f-3a4b5c6d7e8f'
+    version: '2.0'
+Models:
+    electrical:
+        electrical_conductivity: '1.0e-12 S/m'
+        permittivity: '5.6e-11 F/m'
+        resistivity: '1.0e12 Ohm*m'
+        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    linear_elastic:
+        density: '2230 kg/m^3'
+        poissons_ratio: '0.20'
+        ultimate_strength: '60 MPa'
+        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        youngs_modulus: '63 GPa'
+    thermal:
+        melting_point: '820 degC'
+        specific_heat: '830 J/kg/K'
+        thermal_conductivity: '1.2 W/m/K'
+        thermal_expansion: '3.3 um/m/K'
+        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
