@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Aluminium oxide ceramic, 99.5% purity'
     license: 'CC-BY-4.0'
     name: 'Alumina (Al₂O₃)'
-    tags: ['ceramic', 'aluminium', 'aluminum oxide']
+    tags: ['aluminium', 'aluminum oxide', 'ceramic']
     url: 'https://wikipedia.org/wiki/Aluminium_oxide'
     uuid: '3b4c5d6e-7f8a-4b9c-0d1e-2f3a4b5c6d7e'
     version: '2.0'

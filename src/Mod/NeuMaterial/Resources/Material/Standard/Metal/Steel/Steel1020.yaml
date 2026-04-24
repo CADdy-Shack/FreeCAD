@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Low-carbon structural steel, hot-rolled'
-    license: 'LGPL-2.1-or-later'
+    license: 'CC-BY-4.0'
     name: 'Steel 1020'
-    tags: [ 'Steel', 'Structural', 'Low-carbon', 'Hot-rolled', 'Metal']
+    tags: [ 'hot-rolled', 'low-carbon', 'metal', 'steel', 'structural']
     url: 'https://wikipeda.org/wiki/Steel'
     uuid: '7b4e1a2f-3c5d-4e6f-8a9b-0c1d2e3f4a5b'
     version: '2.0'

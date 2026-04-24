@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Acrylonitrile butadiene styrene, general purpose grade'
     license: 'CC-BY-4.0'
     name: 'ABS'
-    tags: ['polymer', 'thermoplastic', 'ABS']
+    tags: ['abs', 'general-purpose', 'polymer', 'thermoplastic']
     url: 'https://wikipeda.com/wiki/Acrylonitrile_butadiene_styrene'
     uuid: '9d0e1f2a-3b4c-4d5e-6f7a-8b9c0d1e2f3a'
     version: '2.0'

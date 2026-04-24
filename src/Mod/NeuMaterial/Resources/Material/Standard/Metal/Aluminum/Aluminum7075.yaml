@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'High-strength aerospace aluminum alloy'
     license: 'CC-BY-4.0'
     name: 'Aluminum 7075-T6'
-    tags: 'Metal, Heat-treated, Wrought'
+    tags: ['aerospace', 'aluminum', 'heat-treated', 'metal', 'wrought']
     url: 'https://wikipedia.org/wiki/Aluminum'
     uuid: '5f6a7b8c-9d0e-4f1a-2b3c-4d5e6f7a8b9c'
     version: '2.0'

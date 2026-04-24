@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Most widely used titanium alloy, aerospace and medical grade'
     license: 'CC-BY-4.0'
     name: 'Titanium Grade 5 (Ti-6Al-4V)'
-    tags: [ 'Metal', 'Alloy', 'Aerospace', 'Medical', 'Titanium']
+    tags: [ 'aerospace', 'alloy', 'medical', 'metal', 'titanium']
     url: 'https://wikipedia.org/wiki/Titanium'
     uuid: '7b8c9d0e-1f2a-4b3c-4d5e-6f7a8b9c0d1e'
     version: '2.0'

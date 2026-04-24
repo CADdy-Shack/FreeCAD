@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Low-expansion borosilicate glass (e.g. Pyrex)'
     license: 'CC-BY-4.0'
     name: 'Borosilicate Glass'
-    tags: ['glass', 'low-expansion', 'low-thermal-expansion']
+    tags: ['borosilicate', 'glass', 'low-expansion', 'low-thermal-expansion', 'pyrex', 'silica', 'silicon']
     url: 'https://en.wikipedia.org/wiki/Borosilicate_glass'
     uuid: '4c5d6e7f-8a9b-4c0d-1e2f-3a4b5c6d7e8f'
     version: '2.0'

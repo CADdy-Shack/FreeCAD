@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Bisphenol-A epoxy resin, cured'
     license: 'CC-BY-4.0'
     name: 'Epoxy (General Purpose)'
-    tags: ['thermoset', 'polymer', 'epoxy']
+    tags: ['epoxy', 'general-purpose', 'polymer', 'thermoset']
     url: 'https://wikipeda.org/wiki/Bisphenol-A_epoxy'
     uuid: '2a3b4c5d-6e7f-4a8b-9c0d-1e2f3a4b5c6d'
     version: '2.0'

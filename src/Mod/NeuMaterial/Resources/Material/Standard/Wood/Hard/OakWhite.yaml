@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'White oak hardwood, air-dried'
     license: 'CC-BY-4.0'
     name: 'Oak (White)'
-    tags: ['wood', 'hardwood', 'oak', 'white']
+    tags: ['hardwood', 'oak', 'white', 'wood']
     url: 'https://wikipeida.com/wiki/Oak_(tree)'
     uuid: '5d6e7f8a-9b0c-4d1e-2f3a-4b5c6d7e8f9a'
     version: '2.0'

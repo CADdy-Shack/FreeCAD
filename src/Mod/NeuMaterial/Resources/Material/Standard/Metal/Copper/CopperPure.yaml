@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Commercially pure copper, annealed'
     license: 'CC-BY-4.0'
     name: 'Copper (Pure)'
-    tags: ['metal', 'copper']
+    tags: ['annealed', 'copper', 'metal']
     url: 'https://wikipeda.org/wiki/Copper'
     uuid: '6a7b8c9d-0e1f-4a2b-3c4d-5e6f7a8b9c0d'
     version: '2.0'

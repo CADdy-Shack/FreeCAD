@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Polyamide 6/6, engineering thermoplastic'
     license: 'CC-BY-4.0'
     name: 'Nylon 6/6 (PA66)'
-    tags: ['Nylon', 'Polyamide', 'Thermoplastic']
+    tags: ['nylon', 'polyamide', 'polymer', 'thermoplastic']
     url: 'https://wikipedia.org/wiki/Polyamide'
     uuid: '1f2a3b4c-5d6e-4f7a-8b9c-0d1e2f3a4b5c'
     version: '2.0'

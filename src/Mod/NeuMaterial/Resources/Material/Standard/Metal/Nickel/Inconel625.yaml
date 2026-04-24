@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Nickel-chromium superalloy, high temperature and corrosion resistant'
     license: 'CC-BY-4.0'
     name: 'Inconel 625'
-    tags: ['nickel', 'chromium', 'superalloy']
+    tags: ['chromium', 'corrosion-resistant', 'high-temperature', 'metal', 'nickel', 'superalloy']
     url: 'https://en.wikipedia.org/wiki/Inconel_625'
     uuid: '8c9d0e1f-2a3b-4c4d-5e6f-7a8b9c0d1e2f'
     version: '2.0'

@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Chromium-molybdenum alloy steel, quenched and tempered'
-    license: 'LGPL-2.1-or-later'
+    license: 'CC-BY-4.0'
     name: 'Steel 4140'
-    tags: [ 'Steel', 'Alloy', 'Tempered', 'Quenched', 'Metal', 'Chromium', 'Molybdenum']
+    tags: [ 'alloy', 'chromium', 'metal', 'molybdenum', 'quenched', 'steel', 'tempered']
     url: 'https://wikipeda.org/wiki/Steel'
     uuid: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f'
     version: '2.0'

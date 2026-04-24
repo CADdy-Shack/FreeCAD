@@ -1,9 +1,10 @@
+---
 General:
     author: 'Michael Cummings'
     description: 'Heat-treated wrought aluminum alloy, general purpose'
     license: 'CC-BY-4.0'
     name: 'Aluminum 6061-T6'
-    tags: 'Metal, Heat-treated, Wrought'
+    tags: ['aluminum', 'general purpose', 'heat-treated', 'metal', 'wrought']
     url: 'https://wikipedia.org/wiki/Aluminum'
     uuid: '4e5f6a7b-8c9d-4e0f-1a2b-3c4d5e6f7a8b'
     version: '2.0'
