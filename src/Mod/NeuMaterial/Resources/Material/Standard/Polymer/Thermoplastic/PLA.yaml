@@ -1,29 +1,29 @@
 ---
 General:
-    author: 'Michael Cummings'
-    description: 'Polylactic acid, biodegradable thermoplastic'
-    license: 'CC-BY-4.0'
-    name: 'PLA'
+    Author: 'Michael Cummings'
+    Description: 'Polylactic acid, biodegradable thermoplastic'
+    License: 'CC-BY-4.0'
+    Name: 'PLA'
     source: 'https://en.wikipedia.org/wiki/Polylactic_acid'
-    tags: ['biodegradable', 'pla', 'polymer', 'thermoplastic']
-    uuid: '0e1f2a3b-4c5d-4e6f-7a8b-9c0d1e2f3a4b'
-    version: '2.0'
+    Tags: ['biodegradable', 'pla', 'polymer', 'thermoplastic']
+    UUID: '0e1f2a3b-4c5d-4e6f-7a8b-9c0d1e2f3a4b'
+    Version: '2.0'
 Models:
-    electrical:
-        electrical_conductivity: '1.0e-14 S/m'
-        permittivity: '3.0e-11 F/m'
-        resistivity: '1.0e14 Ohm*m'
-        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
-    linear_elastic:
-        density: '1240 kg/m^3'
-        poissons_ratio: '0.36'
-        ultimate_strength: '65 MPa'
-        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
-        yield_strength: '55 MPa'
-        youngs_modulus: '3.5 GPa'
-    thermal:
-        melting_point: '175 degC'
-        specific_heat: '1800 J/kg/K'
-        thermal_conductivity: '0.13 W/m/K'
-        thermal_expansion: '68 um/m/K'
-        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
+    Electrical:
+        ElectricalConductivity: '1.0e-14 S/m'
+        Permittivity: '3.0e-11 F/m'
+        Resistivity: '1.0e14 Ohm*m'
+        UUID: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    LinearElastic:
+        Density: '1240 kg/m^3'
+        PoissonsRatio: '0.36'
+        UltimateStrength: '65 MPa'
+        UUID: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        YieldStrength: '55 MPa'
+        YoungsModulus: '3.5 GPa'
+    Thermal:
+        MeltingPoint: '175 degC'
+        SpecificHeat: '1800 J/kg/K'
+        ThermalConductivity: '0.13 W/m/K'
+        ThermalExpansion: '68 um/m/K'
+        UUID: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'

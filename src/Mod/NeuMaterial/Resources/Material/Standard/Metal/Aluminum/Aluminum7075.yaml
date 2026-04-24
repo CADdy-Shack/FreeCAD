@@ -1,29 +1,29 @@
 ---
 General:
-    author: 'Michael Cummings'
-    description: 'High-strength aerospace aluminum alloy'
-    license: 'CC-BY-4.0'
-    name: 'Aluminum 7075-T6'
-    tags: ['aerospace', 'aluminum', 'heat-treated', 'metal', 'wrought']
-    url: 'https://wikipedia.org/wiki/Aluminum'
-    uuid: '5f6a7b8c-9d0e-4f1a-2b3c-4d5e6f7a8b9c'
-    version: '2.0'
+    Author: 'Michael Cummings'
+    Description: 'High-strength aerospace aluminum alloy'
+    License: 'CC-BY-4.0'
+    Name: 'Aluminum 7075-T6'
+    Tags: ['aerospace', 'aluminum', 'heat-treated', 'metal', 'wrought']
+    URL: 'https://wikipedia.org/wiki/Aluminum'
+    UUID: '5f6a7b8c-9d0e-4f1a-2b3c-4d5e6f7a8b9c'
+    Version: '2.0'
 
 Models:
-    electrical:
-        electrical_conductivity: '19600000 S/m'
-        resistivity: '5.1e-8 Ohm*m'
-        uuid: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
-    linear_elastic:
-        density: '2810 kg/m^3'
-        poissons_ratio: '0.33'
-        ultimate_strength: '572 MPa'
-        uuid: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
-        yield_strength: '503 MPa'
-        youngs_modulus: '71.7 GPa'
-    thermal:
-        melting_point: '635 degC'
-        specific_heat: '960 J/kg/K'
-        thermal_conductivity: '130 W/m/K'
-        thermal_expansion: '23.4 um/m/K'
-        uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
+    Electrical:
+        ElectricalConductivity: '19600000 S/m'
+        Resistivity: '5.1e-8 Ohm*m'
+        UUID: 'a4e61e23-7a77-4b4c-9da6-a1a22e5c3e7b'
+    LinearElastic:
+        Density: '2810 kg/m^3'
+        PoissonsRatio: '0.33'
+        UltimateStrength: '572 MPa'
+        UUID: '9cdda8be-b8fb-4c62-95c2-74e852d4afae'
+        YieldStrength: '503 MPa'
+        YoungsModulus: '71.7 GPa'
+    Thermal:
+        MeltingPoint: '635 degC'
+        SpecificHeat: '960 J/kg/K'
+        ThermalConductivity: '130 W/m/K'
+        ThermalExpansion: '23.4 um/m/K'
+        UUID: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
