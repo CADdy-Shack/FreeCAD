@@ -1,15 +1,17 @@
-Model:
-  name: 'PoissonsRatio'
-  uuid: 'b2e39b5d-3f4a-4c6b-7d8e-9f0a1b2c3d4e'
-  url: 'https://en.wikipedia.org/wiki/Poisson%27s_ratio'
-  description: 'Poisson's ratio is the ratio of transverse to axial strain under uniaxial stress'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  poissons_ratio:
-    type: 'Float'
-    units: ''
-    url: 'https://en.wikipedia.org/wiki/Poisson%27s_ratio'
-    description: 'Negative ratio of transverse to axial strain; dimensionless'
-    minimum: '-1.0'
-    maximum: '0.5'
+Model:
+  Name: 'PoissonsRatio'
+  UUID: 'b2e39b5d-3f4a-4c6b-7d8e-9f0a1b2c3d4e'
+  URL: 'https://en.wikipedia.org/wiki/Poisson%27s_ratio'
+  Description: 'Poisson's ratio is the ratio of transverse to axial strain under uniaxial stress'
+  DOI: ''
+  PoissonsRatio:
+    DisplayName: 'Poisson's Ratio'
+    Type: 'Float'
+    Units: ''
+    URL: 'https://en.wikipedia.org/wiki/Poisson%27s_ratio'
+    Description: 'Negative ratio of transverse to axial strain; dimensionless'
+    Minimum: '-1.0'
+    Maximum: '0.5'

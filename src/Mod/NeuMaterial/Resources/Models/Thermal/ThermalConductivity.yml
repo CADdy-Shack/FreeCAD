@@ -1,14 +1,17 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'ThermalConductivity'
-  uuid: 'e5b6ce80-6c7d-4f9e-0a1b-2c3d4e5f6a7b'
-  url: 'https://en.wikipedia.org/wiki/Thermal_conductivity'
-  description: 'Thermal conductivity measures how well a material conducts heat'
-  doi: ''
-Properties:
-  thermal_conductivity:
-    type: 'Quantity'
-    units: 'W/m/K'
-    url: 'https://en.wikipedia.org/wiki/Thermal_conductivity'
-    description: 'Rate of heat transfer per unit area per unit temperature gradient'
-    minimum: '0.0'
-    maximum: ''
+  Name: 'ThermalConductivity'
+  UUID: 'e5b6ce80-6c7d-4f9e-0a1b-2c3d4e5f6a7b'
+  URL: 'https://en.wikipedia.org/wiki/Thermal_conductivity'
+  Description: 'Thermal conductivity measures how well a material conducts heat'
+  DOI: ''
+  ThermalConductivity:
+    DisplayName: 'Thermal Conductivity'
+    Type: 'Quantity'
+    Units: 'W/m/K'
+    URL: 'https://en.wikipedia.org/wiki/Thermal_conductivity'
+    Description: 'Rate of heat transfer per unit area per unit temperature gradient'
+    Minimum: '0.0'
+    Maximum: ''

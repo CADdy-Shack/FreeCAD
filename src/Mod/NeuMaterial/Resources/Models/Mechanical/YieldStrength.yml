@@ -1,15 +1,17 @@
-Model:
-  name: 'YieldStrength'
-  uuid: 'c3f4ac6e-4a5b-4d7c-8e9f-0a1b2c3d4e5f'
-  url: 'https://en.wikipedia.org/wiki/Yield_(engineering)'
-  description: 'Yield strength is the stress at which a material begins to deform plastically'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  yield_strength:
-    type: 'Quantity'
-    units: 'MPa'
-    url: 'https://en.wikipedia.org/wiki/Yield_(engineering)'
-    description: 'Stress at onset of plastic deformation'
-    minimum: '0.0'
-    maximum: ''
+Model:
+  Name: 'YieldStrength'
+  UUID: 'c3f4ac6e-4a5b-4d7c-8e9f-0a1b2c3d4e5f'
+  URL: 'https://en.wikipedia.org/wiki/Yield_(engineering)'
+  Description: 'Yield strength is the stress at which a material begins to deform plastically'
+  DOI: ''
+  YieldStrength:
+    DisplayName: 'Yield Strength'
+    Type: 'Quantity'
+    Units: 'MPa'
+    URL: 'https://en.wikipedia.org/wiki/Yield_(engineering)'
+    Description: 'Stress at onset of plastic deformation'
+    Minimum: '0.0'
+    Maximum: ''

@@ -1,14 +1,17 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'MeltingPoint'
-  uuid: 'b8e9f1b3-9f0a-4c2b-3d4e-5f6a7b8c9d0e'
-  url: 'https://en.wikipedia.org/wiki/Melting_point'
-  description: 'Temperature at which a material transitions from solid to liquid phase at standard pressure'
-  doi: ''
-Properties:
-  melting_point:
-    type: 'Quantity'
-    units: 'degC'
-    url: 'https://en.wikipedia.org/wiki/Melting_point'
-    description: 'Solid-liquid phase transition temperature at 1 atm'
-    minimum: '-273.15'
-    maximum: ''
+  Name: 'MeltingPoint'
+  UUID: 'b8e9f1b3-9f0a-4c2b-3d4e-5f6a7b8c9d0e'
+  URL: 'https://en.wikipedia.org/wiki/Melting_point'
+  Description: 'Temperature at which a material transitions from solid to liquid at standard pressure'
+  DOI: ''
+  MeltingPoint:
+    DisplayName: 'Melting Point'
+    Type: 'Quantity'
+    Units: 'C'
+    URL: 'https://en.wikipedia.org/wiki/Melting_point'
+    Description: 'Solid-liquid phase transition temperature at 1 atm'
+    Minimum: '-273.15'
+    Maximum: ''

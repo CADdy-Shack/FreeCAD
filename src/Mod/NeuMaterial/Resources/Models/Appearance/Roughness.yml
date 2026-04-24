@@ -1,15 +1,17 @@
-Model:
-  name: 'Roughness'
-  uuid: 'a3d4e6a8-4e5f-4b7a-8c9d-0e1f2a3b4c5d'
-  url: 'https://en.wikipedia.org/wiki/Surface_roughness'
-  description: 'Perceptual roughness of the material surface for PBR rendering'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  roughness:
-    type: 'Float'
-    units: ''
-    url: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
-    description: '0.0 = perfectly smooth (mirror), 1.0 = fully rough (diffuse)'
-    minimum: '0.0'
-    maximum: '1.0'
+Model:
+  Name: 'Roughness'
+  UUID: 'a3d4e6a8-4e5f-4b7a-8c9d-0e1f2a3b4c5d'
+  URL: 'https://en.wikipedia.org/wiki/Surface_roughness'
+  Description: 'Perceptual roughness of the material surface for PBR rendering'
+  DOI: ''
+  Roughness:
+    DisplayName: 'Roughness'
+    Type: 'Float'
+    Units: ''
+    URL: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
+    Description: '0.0 = perfectly smooth (mirror), 1.0 = fully rough (diffuse)'
+    Minimum: '0.0'
+    Maximum: '1.0'

@@ -1,14 +1,17 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'Density'
-  uuid: '454661e5-265b-4320-8e6f-fcf6223ac3af'
-  url: 'https://en.wikipedia.org/wiki/Density'
-  description: 'Density is the ratio of mass to volume of a material'
-  doi: ''
-Properties:
-  density:
-    type: 'Quantity'
-    units: 'kg/m^3'
-    url: 'https://en.wikipedia.org/wiki/Density'
-    description: 'Mass per unit volume'
-    minimum: '0.0'
-    maximum: ''
+  Name: 'Density'
+  UUID: '454661e5-265b-4320-8e6f-fcf6223ac3af'
+  URL: 'https://en.wikipedia.org/wiki/Density'
+  Description: 'Density is the ratio of mass to volume of a material'
+  DOI: ''
+  Density:
+    DisplayName: 'Density'
+    Type: 'Quantity'
+    Units: 'kg/m^3'
+    URL: 'https://en.wikipedia.org/wiki/Density'
+    Description: 'Mass per unit volume'
+    Minimum: '0.0'
+    Maximum: ''

@@ -1,14 +1,17 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'SpecificHeat'
-  uuid: 'a7d8e0a2-8e9f-4b1a-2c3d-4e5f6a7b8c9d'
-  url: 'https://en.wikipedia.org/wiki/Specific_heat_capacity'
-  description: 'Specific heat capacity is the energy required to raise the temperature of a unit mass by one degree'
-  doi: ''
-Properties:
-  specific_heat:
-    type: 'Quantity'
-    units: 'J/kg/K'
-    url: 'https://en.wikipedia.org/wiki/Specific_heat_capacity'
-    description: 'Heat energy required per unit mass per unit temperature rise'
-    minimum: '0.0'
-    maximum: ''
+  Name: 'SpecificHeat'
+  UUID: 'a7d8e0a2-8e9f-4b1a-2c3d-4e5f6a7b8c9d'
+  URL: 'https://en.wikipedia.org/wiki/Specific_heat_capacity'
+  Description: 'Energy required to raise the temperature of a unit mass by one degree'
+  DOI: ''
+  SpecificHeat:
+    DisplayName: 'Specific Heat'
+    Type: 'Quantity'
+    Units: 'J/kg/K'
+    URL: 'https://en.wikipedia.org/wiki/Specific_heat_capacity'
+    Description: 'Heat energy required per unit mass per unit temperature rise'
+    Minimum: '0.0'
+    Maximum: ''

@@ -1,15 +1,17 @@
-Model:
-  name: 'Color'
-  uuid: 'f2c3d5f7-3d4e-4a6f-7b8c-9d0e1f2a3b4c'
-  url: 'https://en.wikipedia.org/wiki/Color'
-  description: 'Base color of the material surface as an RGBA value'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  color:
-    type: 'Color'
-    units: ''
-    url: 'https://en.wikipedia.org/wiki/RGBA_color_model'
-    description: 'Surface base color as [R, G, B, A] components in range [0.0, 1.0]'
-    minimum: '0.0'
-    maximum: '1.0'
+Model:
+  Name: 'Color'
+  UUID: 'f2c3d5f7-3d4e-4a6f-7b8c-9d0e1f2a3b4c'
+  URL: 'https://en.wikipedia.org/wiki/Color'
+  Description: 'Base color of the material surface as an RGBA value'
+  DOI: ''
+  Color:
+    DisplayName: 'Color'
+    Type: 'Color'
+    Units: ''
+    URL: 'https://en.wikipedia.org/wiki/RGBA_color_model'
+    Description: 'Surface base color as (R,G,B) or (R,G,B,A) with components in range [0.0, 1.0]'
+    Minimum: '0.0'
+    Maximum: '1.0'

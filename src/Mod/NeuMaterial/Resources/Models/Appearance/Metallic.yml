@@ -1,15 +1,17 @@
-Model:
-  name: 'Metallic'
-  uuid: 'b4e5f7b9-5f6a-4c8b-9d0e-1f2a3b4c5d6e'
-  url: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
-  description: 'Metallic factor for PBR rendering; controls specular vs diffuse response'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  metallic:
-    type: 'Float'
-    units: ''
-    url: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
-    description: '0.0 = dielectric (plastic/ceramic), 1.0 = conductor (metal)'
-    minimum: '0.0'
-    maximum: '1.0'
+Model:
+  Name: 'Metallic'
+  UUID: 'b4e5f7b9-5f6a-4c8b-9d0e-1f2a3b4c5d6e'
+  URL: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
+  Description: 'Metallic factor for PBR rendering; controls specular vs diffuse response'
+  DOI: ''
+  Metallic:
+    DisplayName: 'Metallic'
+    Type: 'Float'
+    Units: ''
+    URL: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
+    Description: '0.0 = dielectric (plastic/ceramic), 1.0 = conductor (metal)'
+    Minimum: '0.0'
+    Maximum: '1.0'

@@ -1,14 +1,17 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'ThermalExpansion'
-  uuid: 'f6c7df91-7d8e-4a0f-1b2c-3d4e5f6a7b8c'
-  url: 'https://en.wikipedia.org/wiki/Thermal_expansion'
-  description: 'Coefficient of linear thermal expansion describes dimensional change with temperature'
-  doi: ''
-Properties:
-  thermal_expansion:
-    type: 'Quantity'
-    units: 'um/m/K'
-    url: 'https://en.wikipedia.org/wiki/Thermal_expansion'
-    description: 'Fractional change in length per degree of temperature change (× 10⁻⁶)'
-    minimum: ''
-    maximum: ''
+  Name: 'ThermalExpansion'
+  UUID: 'f6c7df91-7d8e-4a0f-1b2c-3d4e5f6a7b8c'
+  URL: 'https://en.wikipedia.org/wiki/Thermal_expansion'
+  Description: 'Coefficient of linear thermal expansion describes dimensional change with temperature'
+  DOI: ''
+  ThermalExpansion:
+    DisplayName: 'Thermal Expansion Coefficient'
+    Type: 'Quantity'
+    Units: 'um/m/K'
+    URL: 'https://en.wikipedia.org/wiki/Thermal_expansion'
+    Description: 'Fractional change in length per degree of temperature change (x 10^-6)'
+    Minimum: ''
+    Maximum: ''

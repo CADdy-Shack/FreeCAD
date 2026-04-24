@@ -1,15 +1,17 @@
-Model:
-  name: 'UltimateStrength'
-  uuid: 'd4a5bd7f-5b6c-4e8d-9f0a-1b2c3d4e5f6a'
-  url: 'https://en.wikipedia.org/wiki/Ultimate_tensile_strength'
-  description: 'Ultimate tensile strength is the maximum stress a material can sustain before fracture'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  ultimate_strength:
-    type: 'Quantity'
-    units: 'MPa'
-    url: 'https://en.wikipedia.org/wiki/Ultimate_tensile_strength'
-    description: 'Maximum stress before fracture under uniaxial tension'
-    minimum: '0.0'
-    maximum: ''
+Model:
+  Name: 'UltimateStrength'
+  UUID: 'd4a5bd7f-5b6c-4e8d-9f0a-1b2c3d4e5f6a'
+  URL: 'https://en.wikipedia.org/wiki/Ultimate_tensile_strength'
+  Description: 'Ultimate tensile strength is the maximum stress a material can sustain before fracture'
+  DOI: ''
+  UltimateStrength:
+    DisplayName: 'Ultimate Strength'
+    Type: 'Quantity'
+    Units: 'MPa'
+    URL: 'https://en.wikipedia.org/wiki/Ultimate_tensile_strength'
+    Description: 'Maximum stress before fracture under uniaxial tension'
+    Minimum: '0.0'
+    Maximum: ''

@@ -1,15 +1,15 @@
-Model:
-  name: 'TexturePath'
-  uuid: 'd6a7b9db-7b8c-4e0d-1f2a-3b4c5d6e7f8a'
-  url: ''
-  description: 'Optional filesystem path or resource URL to a texture image for this material'
-  doi: ''
+---
+# SPDX-License-Identifier: CC-BY-4.0
 
-Properties:
-  texture_path:
-    type: 'String'
-    units: ''
-    url: ''
-    description: 'Absolute or relative path to a texture image file; empty if none'
-    minimum: ''
-    maximum: ''
+Model:
+  Name: 'TexturePath'
+  UUID: 'd6a7b9db-7b8c-4e0d-1f2a-3b4c5d6e7f8a'
+  URL: ''
+  Description: 'Optional filesystem path or resource URL to a texture image for this material'
+  DOI: ''
+  TexturePath:
+    DisplayName: 'Texture Path'
+    Type: 'File'
+    Units: ''
+    URL: ''
+    Description: 'Absolute or relative path to a texture image file; empty if none'

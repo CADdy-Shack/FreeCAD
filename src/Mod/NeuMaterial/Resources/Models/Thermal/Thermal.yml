@@ -1,16 +1,19 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'Thermal'
-  uuid: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
-  url: 'https://en.wikipedia.org/wiki/Thermal_properties_of_materials'
-  description: 'Composite thermal model combining conductivity, expansion, specific heat, and melting point'
-  doi: ''
+  Name: 'Thermal'
+  UUID: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
+  URL: 'https://en.wikipedia.org/wiki/Thermal_properties_of_materials'
+  Description: 'Composite thermal model combining conductivity, expansion, specific heat, and melting point'
+  DOI: ''
+
 Inherited:
-  ThermalConductivity:
-    uuid: 'e5b6ce80-6c7d-4f9e-0a1b-2c3d4e5f6a7b'
-  ThermalExpansion:
-    uuid: 'f6c7df91-7d8e-4a0f-1b2c-3d4e5f6a7b8c'
-  SpecificHeat:
-    uuid: 'a7d8e0a2-8e9f-4b1a-2c3d-4e5f6a7b8c9d'
   MeltingPoint:
-    uuid: 'b8e9f1b3-9f0a-4c2b-3d4e-5f6a7b8c9d0e'
-Properties:
+    UUID: 'b8e9f1b3-9f0a-4c2b-3d4e-5f6a7b8c9d0e'
+  SpecificHeat:
+    UUID: 'a7d8e0a2-8e9f-4b1a-2c3d-4e5f6a7b8c9d'
+  ThermalConductivity:
+    UUID: 'e5b6ce80-6c7d-4f9e-0a1b-2c3d4e5f6a7b'
+  ThermalExpansion:
+    UUID: 'f6c7df91-7d8e-4a0f-1b2c-3d4e5f6a7b8c'

@@ -1,20 +1,21 @@
+---
+# SPDX-License-Identifier: CC-BY-4.0
+
 Model:
-  name: 'RenderAppearance'
-  uuid: '3df55a7e-7c4d-4b6b-8b3a-5a5e6e7f8a9b'
-  url: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
-  description: 'Composite PBR appearance model combining color, roughness, metallic, opacity, and texture'
-  doi: ''
+  Name: 'RenderAppearance'
+  UUID: '3df55a7e-7c4d-4b6b-8b3a-5a5e6e7f8a9b'
+  URL: 'https://en.wikipedia.org/wiki/Physically_based_rendering'
+  Description: 'Composite PBR appearance model combining color, roughness, metallic, opacity, and texture'
+  DOI: ''
 
 Inherited:
   Color:
-    uuid: 'f2c3d5f7-3d4e-4a6f-7b8c-9d0e1f2a3b4c'
-  Roughness:
-    uuid: 'a3d4e6a8-4e5f-4b7a-8c9d-0e1f2a3b4c5d'
+    UUID: 'f2c3d5f7-3d4e-4a6f-7b8c-9d0e1f2a3b4c'
   Metallic:
-    uuid: 'b4e5f7b9-5f6a-4c8b-9d0e-1f2a3b4c5d6e'
+    UUID: 'b4e5f7b9-5f6a-4c8b-9d0e-1f2a3b4c5d6e'
   Opacity:
-    uuid: 'c5f6a8ca-6a7b-4d9c-0e1f-2a3b4c5d6e7f'
+    UUID: 'c5f6a8ca-6a7b-4d9c-0e1f-2a3b4c5d6e7f'
+  Roughness:
+    UUID: 'a3d4e6a8-4e5f-4b7a-8c9d-0e1f2a3b4c5d'
   TexturePath:
-    uuid: 'd6a7b9db-7b8c-4e0d-1f2a-3b4c5d6e7f8a'
-
-Properties:
+    UUID: 'd6a7b9db-7b8c-4e0d-1f2a-3b4c5d6e7f8a'
