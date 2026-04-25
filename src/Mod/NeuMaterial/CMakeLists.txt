@@ -41,12 +41,13 @@ install(DIRECTORY
     Gui/commands
     Gui/ui
     Resources
+    third_party
     DESTINATION Mod/NeuMaterial
 )
 
 install(DIRECTORY
-    Gui/commands
-    Gui/ui
-    Resources
+    Gui/Resources
     DESTINATION Mod/NeuMaterial/Gui
 )
+
+# tools/ contains developer CLI scripts and is not installed
