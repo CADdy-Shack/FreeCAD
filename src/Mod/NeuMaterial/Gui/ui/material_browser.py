@@ -1,27 +1,29 @@
 """
-NeuMaterial library browser — a dockable panel that displays all libraries
-and materials in a tree, with search filtering.
+NeuMaterial library browser — dockable panel displaying all libraries
+and materials in a tree with search/tag filtering.
 """
 
 from PySide6.QtCore    import Qt, Signal
 from PySide6.QtWidgets import (
-    QDockWidget, QWidget, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QTreeWidget, QTreeWidgetItem, QPushButton, QLabel,
+    QDockWidget, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QTreeWidget, QTreeWidgetItem,
+    QVBoxLayout, QWidget,
 )
 
-from NeuMaterialApp import store as get_store
+from NeuMaterialApp import materialStore
 
 
 class MaterialBrowserPanel(QDockWidget):
     """Dockable panel listing all material libraries and their materials."""
 
-    materialSelected = Signal(object)   # emits Material or None
+    materialSelected = Signal(object)  # emits Material or None
 
     def __init__(self, parent=None):
         super().__init__("Material Library", parent)
         self.setObjectName("NeuMaterialBrowser")
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-
+        self.setAllowedAreas(
+            Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea
+        )
         self._build_ui()
         self.reload()
 
@@ -30,7 +32,7 @@ class MaterialBrowserPanel(QDockWidget):
     # ------------------------------------------------------------------
 
     def selectedMaterial(self):
-        """Return the currently selected Material object, or None."""
+        """Return the currently selected Material, or None."""
         items = self._tree.selectedItems()
         if not items:
             return None
@@ -39,7 +41,7 @@ class MaterialBrowserPanel(QDockWidget):
     def reload(self):
         """Reload all libraries and materials from the store."""
         self._tree.clear()
-        st = get_store()
+        st = materialStore()
 
         for lib in st.libraries():
             lib_item = QTreeWidgetItem(self._tree, [lib.name])
@@ -48,24 +50,35 @@ class MaterialBrowserPanel(QDockWidget):
             font.setBold(True)
             lib_item.setFont(0, font)
             if lib.readOnly:
-                lib_item.setForeground(0, lib_item.foreground(0))  # keep default
                 lib_item.setToolTip(0, "Built-in library (read-only)")
 
-            materials = st.materialsInLibrary(lib.name)
-            # Group by category
+            # Group materials by category
             categories: dict[str, list] = {}
-            for mat in materials:
-                cat = mat.getCategory() or "Uncategorised"
+            for mat in st.materialsInLibrary(lib.name):
+                cat = mat.getCategory() or "Uncategorized"
                 categories.setdefault(cat, []).append(mat)
 
             for cat_name, mats in sorted(categories.items()):
                 cat_item = QTreeWidgetItem(lib_item, [cat_name.capitalize()])
                 cat_item.setData(0, Qt.UserRole, None)
+
                 for mat in sorted(mats, key=lambda m: m.getName()):
                     mat_item = QTreeWidgetItem(cat_item, [mat.getName()])
                     mat_item.setData(0, Qt.UserRole, mat)
+
+                    # Tooltip: description + tags
+                    tip_parts = []
+                    if mat.getDescription():
+                        tip_parts.append(mat.getDescription())
+                    if mat.getTags():
+                        tip_parts.append(
+                            "Tags: " + ", ".join(sorted(mat.getTags()))
+                        )
                     if mat.isReadOnly():
-                        mat_item.setToolTip(0, "Read-only (built-in)")
+                        tip_parts.append("Read-only (built-in)")
+                    if tip_parts:
+                        mat_item.setToolTip(0, "\n".join(tip_parts))
+
                 cat_item.setExpanded(True)
 
             lib_item.setExpanded(True)
@@ -78,7 +91,7 @@ class MaterialBrowserPanel(QDockWidget):
 
     def _build_ui(self):
         container = QWidget()
-        layout    = QVBoxLayout(container)
+        layout = QVBoxLayout(container)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
@@ -86,7 +99,7 @@ class MaterialBrowserPanel(QDockWidget):
         search_row = QHBoxLayout()
         search_row.addWidget(QLabel("Search:"))
         self._search = QLineEdit()
-        self._search.setPlaceholderText("Filter materials…")
+        self._search.setPlaceholderText("Filter by name or tag\u2026")
         self._search.setClearButtonEnabled(True)
         self._search.textChanged.connect(self._apply_filter)
         search_row.addWidget(self._search)
@@ -119,35 +132,39 @@ class MaterialBrowserPanel(QDockWidget):
         text = text.strip().lower()
         root = self._tree.invisibleRootItem()
 
-        def _set_visible(item, visible):
-            item.setHidden(not visible)
-
         for lib_idx in range(root.childCount()):
-            lib_item   = root.child(lib_idx)
+            lib_item = root.child(lib_idx)
             lib_visible = False
 
             for cat_idx in range(lib_item.childCount()):
-                cat_item    = lib_item.child(cat_idx)
+                cat_item = lib_item.child(cat_idx)
                 cat_visible = False
 
                 for mat_idx in range(cat_item.childCount()):
                     mat_item = cat_item.child(mat_idx)
-                    mat      = mat_item.data(0, Qt.UserRole)
-                    matches  = (not text) or (text in mat.getName().lower())
-                    _set_visible(mat_item, matches)
+                    mat = mat_item.data(0, Qt.UserRole)
+                    if not text:
+                        matches = True
+                    else:
+                        # Match on name or any tag
+                        matches = text in mat.getName().lower()
+                        if not matches:
+                            matches = any(
+                                text in tag.lower()
+                                for tag in mat.getTags()
+                            )
+                    mat_item.setHidden(not matches)
                     cat_visible = cat_visible or matches
 
-                _set_visible(cat_item, cat_visible)
+                cat_item.setHidden(not cat_visible)
                 lib_visible = lib_visible or cat_visible
 
-            _set_visible(lib_item, lib_visible)
+            lib_item.setHidden(not lib_visible)
 
     def _on_selection_changed(self):
         self.materialSelected.emit(self.selectedMaterial())
 
     def _on_double_click(self, item, _column):
-        mat = item.data(0, Qt.UserRole)
-        if mat is not None:
-            # Trigger edit command directly
+        if item.data(0, Qt.UserRole) is not None:
             import FreeCADGui
             FreeCADGui.runCommand("NeuMaterial_EditMaterial")
