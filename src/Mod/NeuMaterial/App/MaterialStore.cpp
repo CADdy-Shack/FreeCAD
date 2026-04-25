@@ -1,9 +1,10 @@
-#include "PreCompiled.h"
 #include "MaterialStore.h"
 #include "MaterialIO.h"
 
-#include <algorithm>
-#include <stdexcept>
+#include <random>
+#include <iomanip>
+
+#include <Base/Console.h>
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -24,22 +25,20 @@ namespace fs = std::filesystem;
 static fs::path defaultUserLibrariesRoot()
 {
 #ifdef _WIN32
-    // %APPDATA%\FreeCAD\NeuMaterial\libraries
     wchar_t path[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_APPDATA, nullptr, 0, path)))
         return fs::path(path) / "FreeCAD" / "NeuMaterial" / "libraries";
     return fs::temp_directory_path() / "NeuMaterial" / "libraries";
 #elif defined(__APPLE__)
-    // ~/Library/Application Support/FreeCAD/NeuMaterial/libraries
     const char* home = getenv("HOME");
     if (!home) {
         struct passwd* pw = getpwuid(getuid());
         home = pw ? pw->pw_dir : "/tmp";
     }
-    return fs::path(home) / "Library" / "Application Support" / "FreeCAD" / "NeuMaterial" / "libraries";
+    return fs::path(home) / "Library" / "Application Support"
+                          / "FreeCAD" / "NeuMaterial" / "libraries";
 #else
     // XDG: $XDG_DATA_HOME/FreeCAD/NeuMaterial/libraries
-    // Falls back to ~/.local/share/FreeCAD/NeuMaterial/libraries
     const char* xdg = getenv("XDG_DATA_HOME");
     if (xdg && *xdg)
         return fs::path(xdg) / "FreeCAD" / "NeuMaterial" / "libraries";
@@ -48,73 +47,62 @@ static fs::path defaultUserLibrariesRoot()
         struct passwd* pw = getpwuid(getuid());
         home = pw ? pw->pw_dir : "/tmp";
     }
-    return fs::path(home) / ".local" / "share" / "FreeCAD" / "NeuMaterial" / "libraries";
+    return fs::path(home) / ".local" / "share"
+                          / "FreeCAD" / "NeuMaterial" / "libraries";
 #endif
 }
 
 // ---------------------------------------------------------------------------
-// Construction
+// Initialization
 // ---------------------------------------------------------------------------
 
-MaterialStore::MaterialStore() = default;
-
-// ---------------------------------------------------------------------------
-// Initialisation
-// ---------------------------------------------------------------------------
-
-void MaterialStore::initialise(const fs::path& builtinLibraryPath,
+void MaterialStore::initialize(const fs::path& resourcesPath,
                                const fs::path& userLibrariesRoot)
 {
     libraries_.clear();
-    materialsById_.clear();
+    byUuid_.clear();
 
     userLibrariesRoot_ = userLibrariesRoot.empty()
                              ? defaultUserLibrariesRoot()
                              : userLibrariesRoot;
 
-    // Register + load built-in library
-    Library builtin;
-    builtin.name     = "Built-in";
-    builtin.rootPath = builtinLibraryPath;
-    builtin.readOnly = true;
-    libraries_.push_back(builtin);
-    discoverLibrary(libraries_.back());
-
-    // Register built-in Standard material library
-    // Location: Resources/Material/Standard/
+    // Built-in Standard library — Resources/Material/Standard/
     {
-        Library standard;
-        standard.name     = "Standard";
-        standard.rootPath = resourcesPath / "Material" / "Standard";
-        standard.readOnly = true;
-        libraries_.push_back(standard);
+        Library lib;
+        lib.name     = "Standard";
+        lib.readOnly = true;
+        lib.rootPath = resourcesPath / "Material" / "Standard";
+        libraries_.push_back(lib);
         discoverLibrary(libraries_.back());
     }
 
-    // Register built-in Appearance material library
-    // Location: Resources/Material/Appearance/
+    // Built-in Appearance library — Resources/Material/Appearance/
     {
-        Library appearance;
-        appearance.name     = "Appearance";
-        appearance.rootPath = resourcesPath / "Material" / "Appearance";
-        appearance.readOnly = true;
-        libraries_.push_back(appearance);
+        Library lib;
+        lib.name     = "Appearance";
+        lib.readOnly = true;
+        lib.rootPath = resourcesPath / "Material" / "Appearance";
+        libraries_.push_back(lib);
         discoverLibrary(libraries_.back());
     }
 
-    // Discover user libraries (each sub-directory is one library)
+    // User libraries — one sub-directory per library
     if (fs::exists(userLibrariesRoot_)) {
-        for (const auto& entry : fs::directory_iterator(userLibrariesRoot_)) {
+        for (const auto& entry :
+             fs::directory_iterator(userLibrariesRoot_)) {
             if (!entry.is_directory()) continue;
-
-            Library userLib;
-            userLib.name     = entry.path().filename().string();
-            userLib.rootPath = entry.path();
-            userLib.readOnly = false;
-            libraries_.push_back(userLib);
+            Library lib;
+            lib.name     = entry.path().filename().string();
+            lib.readOnly = false;
+            lib.rootPath = entry.path();
+            libraries_.push_back(lib);
             discoverLibrary(libraries_.back());
         }
     }
+
+    Base::Console().Log(
+        "NeuMaterial: MaterialStore ready — %zu material(s) in %zu library(-ies)\n",
+        byUuid_.size(), libraries_.size());
 }
 
 // ---------------------------------------------------------------------------
@@ -130,21 +118,20 @@ bool MaterialStore::createUserLibrary(const std::string& name)
 
     Library lib;
     lib.name     = name;
-    lib.rootPath = libPath;
     lib.readOnly = false;
+    lib.rootPath = libPath;
     libraries_.push_back(lib);
     return true;
 }
 
 bool MaterialStore::removeUserLibrary(const std::string& name)
 {
-    const Library* lib = findLibrary(name);
+    Library* lib = findLibrary(name);
     if (!lib || lib->readOnly) return false;
 
-    // Remove all materials belonging to this library from the index
-    for (auto it = materialsById_.begin(); it != materialsById_.end(); ) {
+    for (auto it = byUuid_.begin(); it != byUuid_.end(); ) {
         if (it->second->getLibrary() == name)
-            it = materialsById_.erase(it);
+            it = byUuid_.erase(it);
         else
             ++it;
     }
@@ -166,8 +153,8 @@ bool MaterialStore::removeUserLibrary(const std::string& name)
 std::vector<std::shared_ptr<Material>> MaterialStore::allMaterials() const
 {
     std::vector<std::shared_ptr<Material>> result;
-    result.reserve(materialsById_.size());
-    for (const auto& [id, mat] : materialsById_)
+    result.reserve(byUuid_.size());
+    for (const auto& [uuid, mat] : byUuid_)
         result.push_back(mat);
     return result;
 }
@@ -176,29 +163,31 @@ std::vector<std::shared_ptr<Material>>
 MaterialStore::materialsInLibrary(const std::string& libraryName) const
 {
     std::vector<std::shared_ptr<Material>> result;
-    for (const auto& [id, mat] : materialsById_)
+    for (const auto& [uuid, mat] : byUuid_)
         if (mat->getLibrary() == libraryName)
             result.push_back(mat);
     return result;
 }
 
-std::shared_ptr<Material> MaterialStore::findById(const std::string& id) const
+std::shared_ptr<Material>
+MaterialStore::findByUuid(const std::string& uuid) const
 {
-    const auto it = materialsById_.find(id);
-    return it != materialsById_.end() ? it->second : nullptr;
+    const auto it = byUuid_.find(uuid);
+    return it != byUuid_.end() ? it->second : nullptr;
 }
 
-std::shared_ptr<Material> MaterialStore::findByName(const std::string& name) const
+std::shared_ptr<Material>
+MaterialStore::findByName(const std::string& name) const
 {
     std::string lower = name;
     std::transform(lower.begin(), lower.end(), lower.begin(),
                    [](unsigned char c){ return std::tolower(c); });
 
-    for (const auto& [id, mat] : materialsById_) {
-        std::string matName = mat->getName();
-        std::transform(matName.begin(), matName.end(), matName.begin(),
+    for (const auto& [uuid, mat] : byUuid_) {
+        std::string n = mat->getName();
+        std::transform(n.begin(), n.end(), n.begin(),
                        [](unsigned char c){ return std::tolower(c); });
-        if (matName == lower) return mat;
+        if (n == lower) return mat;
     }
     return nullptr;
 }
@@ -207,9 +196,16 @@ std::shared_ptr<Material> MaterialStore::findByName(const std::string& name) con
 // CRUD
 // ---------------------------------------------------------------------------
 
-std::shared_ptr<Material> MaterialStore::addMaterial(Material material,
-                                                     const std::string& libraryName)
+std::shared_ptr<Material>
+MaterialStore::addMaterial(Material material, const std::string& libraryName)
 {
+    if (material.getUuid().empty())
+        throw std::invalid_argument(
+            "Material must have a UUID before calling addMaterial().");
+    if (material.getName().empty())
+        throw std::invalid_argument(
+            "Material must have a Name before calling addMaterial().");
+
     const Library* lib = findLibrary(libraryName);
     if (!lib)
         throw std::invalid_argument("Library not found: " + libraryName);
@@ -221,58 +217,61 @@ std::shared_ptr<Material> MaterialStore::addMaterial(Material material,
 
     auto shared = std::make_shared<Material>(std::move(material));
     MaterialIO::save(*shared, materialFilePath(*shared));
-    materialsById_[shared->getId()] = shared;
+    byUuid_[shared->getUuid()] = shared;
     return shared;
 }
 
 void MaterialStore::updateMaterial(const Material& material)
 {
     if (material.isReadOnly())
-        throw std::runtime_error("Cannot update a read-only material: " + material.getName());
+        throw std::runtime_error(
+            "Cannot update read-only material: " + material.getName());
 
-    const auto it = materialsById_.find(material.getId());
-    if (it == materialsById_.end())
-        throw std::runtime_error("Material not found: " + material.getId());
+    const auto it = byUuid_.find(material.getUuid());
+    if (it == byUuid_.end())
+        throw std::runtime_error(
+            "Material not found in store: " + material.getUuid());
 
     *it->second = material;
     MaterialIO::save(material, materialFilePath(material));
 }
 
-void MaterialStore::deleteMaterial(const std::string& id)
+void MaterialStore::deleteMaterial(const std::string& uuid)
 {
-    const auto it = materialsById_.find(id);
-    if (it == materialsById_.end()) return;
+    const auto it = byUuid_.find(uuid);
+    if (it == byUuid_.end()) return;
 
     if (it->second->isReadOnly())
-        throw std::runtime_error("Cannot delete a read-only material: " + it->second->getName());
+        throw std::runtime_error(
+            "Cannot delete read-only material: " + it->second->getName());
 
-    fs::path filePath = materialFilePath(*it->second);
-    if (fs::exists(filePath))
-        fs::remove(filePath);
+    const fs::path path = materialFilePath(*it->second);
+    if (fs::exists(path))
+        fs::remove(path);
 
-    materialsById_.erase(it);
+    byUuid_.erase(it);
 }
 
 std::shared_ptr<Material>
-MaterialStore::duplicateMaterial(const std::string& sourceId,
+MaterialStore::duplicateMaterial(const std::string& sourceUuid,
                                  const std::string& targetLibrary,
                                  const std::string& newName)
 {
-    const auto source = findById(sourceId);
+    const auto source = findByUuid(sourceUuid);
     if (!source)
-        throw std::invalid_argument("Source material not found: " + sourceId);
+        throw std::invalid_argument(
+            "Source material not found: " + sourceUuid);
 
     Material copy = *source;
     copy.setName(newName.empty() ? copy.getName() + " (copy)" : newName);
+    copy.setUuid(generateUuid());
     copy.setReadOnly(false);
-    // Force a new id by clearing it — addMaterial will set library, save will persist
     return addMaterial(std::move(copy), targetLibrary);
 }
 
 void MaterialStore::reload()
 {
-    // Preserve library descriptors, clear and re-load all material data
-    materialsById_.clear();
+    byUuid_.clear();
     for (const Library& lib : libraries_)
         discoverLibrary(lib);
 }
@@ -285,25 +284,44 @@ void MaterialStore::discoverLibrary(const Library& lib)
 {
     if (!fs::exists(lib.rootPath)) return;
 
-    for (const auto& entry : fs::recursive_directory_iterator(lib.rootPath)) {
+    for (const auto& entry :
+         fs::recursive_directory_iterator(lib.rootPath)) {
         if (!entry.is_regular_file()) continue;
         if (entry.path().extension() != ".yaml") continue;
 
         try {
             Material mat = MaterialIO::load(entry.path());
+
+            if (mat.getUuid().empty()) {
+                Base::Console().Warning(
+                    "NeuMaterial: skipping material with no UUID: %s\n",
+                    entry.path().string().c_str());
+                continue;
+            }
+
+            if (byUuid_.count(mat.getUuid())) {
+                Base::Console().Warning(
+                    "NeuMaterial: duplicate UUID '%s' in %s — skipping\n",
+                    mat.getUuid().c_str(),
+                    entry.path().string().c_str());
+                continue;
+            }
+
             mat.setLibrary(lib.name);
             mat.setReadOnly(lib.readOnly);
 
-            // Derive category from the sub-directory name relative to library root
-            fs::path rel = fs::relative(entry.path().parent_path(), lib.rootPath);
+            // Derive category from sub-directory path relative to library root
+            const fs::path rel = fs::relative(
+                entry.path().parent_path(), lib.rootPath);
             if (!rel.empty() && rel != ".")
                 mat.setCategory(rel.string());
 
-            materialsById_[mat.getId()] = std::make_shared<Material>(std::move(mat));
-        } catch (const std::exception& e) {
-            // Log and skip malformed files rather than aborting
-            // TODO: route through FreeCAD's Base::Console once integrated
-            (void)e;
+            byUuid_[mat.getUuid()] = std::make_shared<Material>(std::move(mat));
+        }
+        catch (const std::exception& e) {
+            Base::Console().Warning(
+                "NeuMaterial: failed to load material %s: %s\n",
+                entry.path().string().c_str(), e.what());
         }
     }
 }
@@ -312,14 +330,16 @@ fs::path MaterialStore::materialFilePath(const Material& material) const
 {
     const Library* lib = findLibrary(material.getLibrary());
     if (!lib)
-        throw std::runtime_error("Library not found for material: " + material.getName());
+        throw std::runtime_error(
+            "Library not found for material: " + material.getName());
 
-    fs::path dir = material.getCategory().empty()
-                       ? lib->rootPath
-                       : lib->rootPath / material.getCategory();
+    // User material files are named by UUID to avoid slug collisions
+    const fs::path dir = material.getCategory().empty()
+                             ? lib->rootPath
+                             : lib->rootPath / material.getCategory();
     fs::create_directories(dir);
 
-    return dir / (Material::makeSlug(material.getName()) + ".yaml");
+    return dir / (material.getUuid() + ".yaml");
 }
 
 Library* MaterialStore::findLibrary(const std::string& name)
@@ -334,6 +354,24 @@ const Library* MaterialStore::findLibrary(const std::string& name) const
     for (const Library& lib : libraries_)
         if (lib.name == name) return &lib;
     return nullptr;
+}
+
+std::string MaterialStore::generateUuid()
+{
+    std::random_device              rd;
+    std::mt19937                    gen(rd());
+    std::uniform_int_distribution<> d(0, 15);
+    std::uniform_int_distribution<> d2(8, 11);
+
+    std::ostringstream oss;
+    oss << std::hex;
+    for (int i = 0; i < 8;  ++i) oss << d(gen);  oss << '-';
+    for (int i = 0; i < 4;  ++i) oss << d(gen);  oss << "-4";
+    for (int i = 0; i < 3;  ++i) oss << d(gen);  oss << '-';
+    oss << d2(gen);
+    for (int i = 0; i < 3;  ++i) oss << d(gen);  oss << '-';
+    for (int i = 0; i < 12; ++i) oss << d(gen);
+    return oss.str();
 }
 
 } // namespace NeuMaterial::App
