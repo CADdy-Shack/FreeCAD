@@ -9,11 +9,8 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
-
-// yaml-cpp — included globally so every translation unit can parse/emit YAML
-// without repeating the include. Make sure yaml-cpp is found by CMake.
-#include <yaml-cpp/yaml.h>
