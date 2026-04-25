@@ -1,39 +1,59 @@
 #pragma once
 
+#include "PreCompiled.h"
 #include "Material.h"
-
-#include <string>
-#include <vector>
+#include "MaterialModel.h"
+#include "ModelStore.h"
 
 namespace NeuMaterial::App {
+
+// ---------------------------------------------------------------------------
+// ValidationIssue
+// ---------------------------------------------------------------------------
+
+struct ValidationIssue {
+    enum class Severity { Error, Warning };
+
+    std::string field;    // dotted path e.g. "LinearElastic.PoissonsRatio"
+    std::string message;
+    Severity    severity;
+};
 
 // ---------------------------------------------------------------------------
 // ValidationResult
 // ---------------------------------------------------------------------------
 
-struct ValidationIssue {
-    enum class Severity { Warning, Error };
-
-    Severity    severity;
-    std::string field;    // dotted path, e.g. "mechanical.poissons_ratio"
-    std::string message;
-};
-
 struct ValidationResult {
     std::vector<ValidationIssue> issues;
 
-    bool isValid() const;    // true if no Error-level issues
+    /// True if there are no Error-level issues.
+    bool isValid() const;
+
+    bool hasErrors()   const;
     bool hasWarnings() const;
 
-    /// Convenience: collect all error messages as a single string
+    /// All error messages joined as a single string, one per line.
     std::string errorSummary() const;
+
+    /// All warning messages joined as a single string, one per line.
+    std::string warningSummary() const;
 };
 
 // ---------------------------------------------------------------------------
 // MaterialValidator
 //
-// Validates property ranges and optionally converts between unit systems.
-// All validation is non-destructive — the original Material is never modified.
+// Validates a Material against its declared Models using the ModelStore for
+// property bounds (Minimum/Maximum from the model PropertyDefinition).
+//
+// Cross-field consistency checks that cannot be expressed in a single
+// PropertyDefinition (e.g., YieldStrength <= UltimateStrength) are handled
+// here as named rules.
+//
+// All validation is non-destructive — the Material is never modified.
+//
+// Unit conversion helpers are pure static functions provided here as a
+// convenience for other code that needs to convert between unit systems.
+// Naming convention: fromUnit_to_toUnit(value).
 // ---------------------------------------------------------------------------
 
 class MaterialValidator {
@@ -44,46 +64,59 @@ public:
     // Validation
     // ------------------------------------------------------------------
 
+    /// Validate a material against its declared models.
+    /// Uses the global ModelStore singleton (must be initialized first).
     static ValidationResult validate(const Material& material);
 
     // ------------------------------------------------------------------
-    // Unit conversion helpers
-    //
-    // These are pure functions: given a value in the source unit,
-    // return the equivalent in the target unit.
-    //
-    // Naming convention: <quantity>_<fromUnit>_to_<toUnit>
+    // Unit conversion — Density
     // ------------------------------------------------------------------
 
-    // Pressure / modulus  (MPa ↔ GPa ↔ psi ↔ ksi)
-    static double MPa_to_GPa(double mpa)  { return mpa  * 1e-3; }
-    static double GPa_to_MPa(double gpa)  { return gpa  * 1e3;  }
-    static double MPa_to_psi(double mpa)  { return mpa  * 145.038; }
-    static double psi_to_MPa(double psi)  { return psi  / 145.038; }
-    static double ksi_to_MPa(double ksi)  { return ksi  * 6.89476; }
-
-    // Density  (kg/m³ ↔ g/cm³ ↔ lb/in³)
-    static double kgm3_to_gcm3(double v)  { return v * 1e-3;      }
-    static double gcm3_to_kgm3(double v)  { return v * 1e3;       }
+    static double gcm3_to_kgm3 (double v) { return v * 1e3;       }
+    static double kgm3_to_gcm3 (double v) { return v * 1e-3;      }
     static double kgm3_to_lbin3(double v) { return v * 3.6127e-5; }
     static double lbin3_to_kgm3(double v) { return v / 3.6127e-5; }
 
-    // Temperature  (°C ↔ °F ↔ K)
-    static double C_to_F(double c)        { return c * 9.0 / 5.0 + 32.0; }
-    static double F_to_C(double f)        { return (f - 32.0) * 5.0 / 9.0; }
-    static double C_to_K(double c)        { return c + 273.15; }
-    static double K_to_C(double k)        { return k - 273.15; }
+    // ------------------------------------------------------------------
+    // Unit conversion — Pressure / Modulus / Strength
+    // ------------------------------------------------------------------
 
-    // Thermal conductivity  (W/m·K ↔ BTU/h·ft·°F)
-    static double WmK_to_BTU(double v)    { return v * 0.57778; }
-    static double BTU_to_WmK(double v)    { return v / 0.57778; }
+    static double GPa_to_MPa(double v) { return v * 1e3;      }
+    static double ksi_to_MPa(double v) { return v * 6.89476;  }
+    static double MPa_to_GPa(double v) { return v * 1e-3;     }
+    static double MPa_to_psi(double v) { return v * 145.038;  }
+    static double psi_to_MPa(double v) { return v / 145.038;  }
+
+    // ------------------------------------------------------------------
+    // Unit conversion — Temperature
+    // ------------------------------------------------------------------
+
+    static double C_to_F(double v) { return v * 9.0 / 5.0 + 32.0; }
+    static double C_to_K(double v) { return v + 273.15;            }
+    static double F_to_C(double v) { return (v - 32.0) * 5.0 / 9.0; }
+    static double K_to_C(double v) { return v - 273.15;            }
+
+    // ------------------------------------------------------------------
+    // Unit conversion — Thermal conductivity
+    // ------------------------------------------------------------------
+
+    static double BTU_to_WmK(double v) { return v / 0.57778; }
+    static double WmK_to_BTU(double v) { return v * 0.57778; }
 
 private:
-    static void validateMechanical(const Material& mat, ValidationResult& result);
-    static void validateThermal   (const Material& mat, ValidationResult& result);
-    static void validateElectrical(const Material& mat, ValidationResult& result);
-    static void validateAppearance(const Material& mat, ValidationResult& result);
+    // Per-model-group validators
+    static void validateAppearance   (const Material& mat, ValidationResult& r);
+    static void validateElectrical   (const Material& mat, ValidationResult& r);
+    static void validateLinearElastic(const Material& mat, ValidationResult& r);
+    static void validateThermal      (const Material& mat, ValidationResult& r);
 
+    // Model-driven range check using ModelStore PropertyDefinition bounds
+    static void checkBounds(const std::string& modelKey,
+                            const std::string& propKey,
+                            std::optional<double> value,
+                            ValidationResult& r);
+
+    // Helpers
     static void addError  (ValidationResult& r, const std::string& field,
                            const std::string& message);
     static void addWarning(ValidationResult& r, const std::string& field,

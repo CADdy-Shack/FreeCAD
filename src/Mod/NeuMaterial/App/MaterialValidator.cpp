@@ -1,7 +1,4 @@
-#include "PreCompiled.h"
 #include "MaterialValidator.h"
-
-#include <sstream>
 
 namespace NeuMaterial::App {
 
@@ -11,10 +8,15 @@ namespace NeuMaterial::App {
 
 bool ValidationResult::isValid() const
 {
+    return !hasErrors();
+}
+
+bool ValidationResult::hasErrors() const
+{
     for (const auto& issue : issues)
         if (issue.severity == ValidationIssue::Severity::Error)
-            return false;
-    return true;
+            return true;
+    return false;
 }
 
 bool ValidationResult::hasWarnings() const
@@ -28,10 +30,18 @@ bool ValidationResult::hasWarnings() const
 std::string ValidationResult::errorSummary() const
 {
     std::ostringstream oss;
-    for (const auto& issue : issues) {
+    for (const auto& issue : issues)
         if (issue.severity == ValidationIssue::Severity::Error)
             oss << "[" << issue.field << "] " << issue.message << "\n";
-    }
+    return oss.str();
+}
+
+std::string ValidationResult::warningSummary() const
+{
+    std::ostringstream oss;
+    for (const auto& issue : issues)
+        if (issue.severity == ValidationIssue::Severity::Warning)
+            oss << "[" << issue.field << "] " << issue.message << "\n";
     return oss.str();
 }
 
@@ -43,129 +53,155 @@ ValidationResult MaterialValidator::validate(const Material& material)
 {
     ValidationResult result;
 
+    // Identity checks
     if (material.getName().empty())
-        addError(result, "name", "Material name must not be empty.");
+        addError(result, "General.Name", "Material name must not be empty.");
+    if (material.getUuid().empty())
+        addError(result, "General.UUID", "Material UUID must not be empty.");
 
-    validateMechanical(material, result);
-    validateThermal   (material, result);
-    validateElectrical(material, result);
-    validateAppearance(material, result);
+    // Per-model-group validation (a-z)
+    validateAppearance   (material, result);
+    validateElectrical   (material, result);
+    validateLinearElastic(material, result);
+    validateThermal      (material, result);
 
     return result;
 }
 
 // ---------------------------------------------------------------------------
-// Per-category validators
+// Per-model-group validators
 // ---------------------------------------------------------------------------
 
-void MaterialValidator::validateMechanical(const Material& mat,
-                                           ValidationResult& result)
-{
-    const auto& m = mat.mechanical();
-
-    if (m.density.has_value() && *m.density <= 0.0)
-        addError(result, "mechanical.density",
-                 "Density must be positive (kg/m³).");
-
-    if (m.youngsModulus.has_value() && *m.youngsModulus <= 0.0)
-        addError(result, "mechanical.youngs_modulus",
-                 "Young's modulus must be positive (GPa).");
-
-    if (m.poissonsRatio.has_value()) {
-        if (*m.poissonsRatio <= -1.0 || *m.poissonsRatio >= 0.5)
-            addError(result, "mechanical.poissons_ratio",
-                     "Poisson's ratio must be in the range (-1, 0.5).");
-        if (*m.poissonsRatio < 0.0)
-            addWarning(result, "mechanical.poissons_ratio",
-                       "Negative Poisson's ratio (auxetic material) — verify intentional.");
-    }
-
-    if (m.yieldStrength.has_value() && *m.yieldStrength <= 0.0)
-        addError(result, "mechanical.yield_strength",
-                 "Yield strength must be positive (MPa).");
-
-    if (m.ultimateStrength.has_value() && *m.ultimateStrength <= 0.0)
-        addError(result, "mechanical.ultimate_strength",
-                 "Ultimate strength must be positive (MPa).");
-
-    if (m.yieldStrength.has_value() && m.ultimateStrength.has_value()
-        && *m.yieldStrength > *m.ultimateStrength)
-        addWarning(result, "mechanical.yield_strength",
-                   "Yield strength exceeds ultimate strength — verify values.");
-}
-
-void MaterialValidator::validateThermal(const Material& mat,
-                                        ValidationResult& result)
-{
-    const auto& t = mat.thermal();
-
-    if (t.thermalConductivity.has_value() && *t.thermalConductivity < 0.0)
-        addError(result, "thermal.thermal_conductivity",
-                 "Thermal conductivity must be non-negative (W/m·K).");
-
-    if (t.thermalExpansion.has_value() && *t.thermalExpansion < 0.0)
-        addWarning(result, "thermal.thermal_expansion",
-                   "Negative thermal expansion coefficient — verify intentional.");
-
-    if (t.specificHeat.has_value() && *t.specificHeat <= 0.0)
-        addError(result, "thermal.specific_heat",
-                 "Specific heat must be positive (J/kg·K).");
-
-    if (t.meltingPoint.has_value() && *t.meltingPoint < -273.15)
-        addError(result, "thermal.melting_point",
-                 "Melting point cannot be below absolute zero (−273.15 °C).");
-}
-
-void MaterialValidator::validateElectrical(const Material& mat,
-                                           ValidationResult& result)
-{
-    const auto& e = mat.electrical();
-
-    if (e.electricalConductivity.has_value() && *e.electricalConductivity < 0.0)
-        addError(result, "electrical.electrical_conductivity",
-                 "Electrical conductivity must be non-negative (S/m).");
-
-    if (e.resistivity.has_value() && *e.resistivity < 0.0)
-        addError(result, "electrical.resistivity",
-                 "Resistivity must be non-negative (Ω·m).");
-
-    if (e.permittivity.has_value() && *e.permittivity < 0.0)
-        addError(result, "electrical.permittivity",
-                 "Permittivity must be non-negative (F/m).");
-
-    // Consistency check: conductivity and resistivity should be reciprocals
-    if (e.electricalConductivity.has_value() && e.resistivity.has_value()
-        && *e.electricalConductivity > 0.0 && *e.resistivity > 0.0) {
-        double product = *e.electricalConductivity * *e.resistivity;
-        if (std::abs(product - 1.0) > 0.05)   // 5 % tolerance
-            addWarning(result, "electrical.resistivity",
-                       "Conductivity × resistivity deviates from 1.0 — check consistency.");
-    }
-}
-
 void MaterialValidator::validateAppearance(const Material& mat,
-                                           ValidationResult& result)
+                                           ValidationResult& r)
 {
     const auto& a = mat.appearance();
 
-    auto inRange01 = [](float v) { return v >= 0.0f && v <= 1.0f; };
+    auto inRange = [](float v) { return v >= 0.0f && v <= 1.0f; };
 
     for (int i = 0; i < 4; ++i) {
-        if (!inRange01(a.color[i])) {
-            addError(result, "appearance.color",
-                     "Color RGBA components must be in [0, 1].");
+        if (!inRange(a.color[i])) {
+            addError(r, "RenderAppearance.Color",
+                     "Color RGBA components must each be in [0.0, 1.0].");
             break;
         }
     }
+    if (!inRange(a.metallic))
+        addError(r, "RenderAppearance.Metallic",
+                 "Metallic must be in [0.0, 1.0].");
+    if (!inRange(a.opacity))
+        addError(r, "RenderAppearance.Opacity",
+                 "Opacity must be in [0.0, 1.0].");
+    if (!inRange(a.roughness))
+        addError(r, "RenderAppearance.Roughness",
+                 "Roughness must be in [0.0, 1.0].");
+}
 
-    if (!inRange01(a.roughness))
-        addError(result, "appearance.roughness", "Roughness must be in [0, 1].");
+void MaterialValidator::validateElectrical(const Material& mat,
+                                           ValidationResult& r)
+{
+    const auto& e = mat.electrical();
 
-    if (!inRange01(a.metallic))
-        addError(result, "appearance.metallic", "Metallic must be in [0, 1].");
+    checkBounds("Electrical", "ElectricalConductivity",
+                e.electricalConductivity, r);
+    checkBounds("Electrical", "Permittivity",
+                e.permittivity, r);
+    checkBounds("Electrical", "Resistivity",
+                e.resistivity, r);
 
-    if (!inRange01(a.opacity))
-        addError(result, "appearance.opacity", "Opacity must be in [0, 1].");
+    // Cross-field: conductivity and resistivity should be reciprocals
+    if (e.electricalConductivity.has_value() && e.resistivity.has_value()
+        && *e.electricalConductivity > 0.0 && *e.resistivity > 0.0) {
+        double product = *e.electricalConductivity * *e.resistivity;
+        if (std::abs(product - 1.0) > 0.05)
+            addWarning(r, "Electrical.Resistivity",
+                       "ElectricalConductivity x Resistivity deviates from "
+                       "1.0 by more than 5% — check consistency.");
+    }
+}
+
+void MaterialValidator::validateLinearElastic(const Material& mat,
+                                              ValidationResult& r)
+{
+    const auto& m = mat.mechanical();
+
+    checkBounds("LinearElastic", "Density",          m.density,          r);
+    checkBounds("LinearElastic", "PoissonsRatio",    m.poissonsRatio,    r);
+    checkBounds("LinearElastic", "UltimateStrength", m.ultimateStrength, r);
+    checkBounds("LinearElastic", "YieldStrength",    m.yieldStrength,    r);
+    checkBounds("LinearElastic", "YoungsModulus",    m.youngsModulus,    r);
+
+    // Cross-field: yield must not exceed ultimate
+    if (m.yieldStrength.has_value() && m.ultimateStrength.has_value()
+        && *m.yieldStrength > *m.ultimateStrength)
+        addWarning(r, "LinearElastic.YieldStrength",
+                   "YieldStrength exceeds UltimateStrength — verify values.");
+
+    // Auxetic material warning
+    if (m.poissonsRatio.has_value() && *m.poissonsRatio < 0.0)
+        addWarning(r, "LinearElastic.PoissonsRatio",
+                   "Negative Poisson's ratio (auxetic material) — "
+                   "verify this is intentional.");
+}
+
+void MaterialValidator::validateThermal(const Material& mat,
+                                        ValidationResult& r)
+{
+    const auto& t = mat.thermal();
+
+    checkBounds("Thermal", "MeltingPoint",        t.meltingPoint,        r);
+    checkBounds("Thermal", "SpecificHeat",        t.specificHeat,        r);
+    checkBounds("Thermal", "ThermalConductivity", t.thermalConductivity, r);
+    checkBounds("Thermal", "ThermalExpansion",    t.thermalExpansion,    r);
+
+    // Negative thermal expansion is physically possible (auxetic) but unusual
+    if (t.thermalExpansion.has_value() && *t.thermalExpansion < 0.0)
+        addWarning(r, "Thermal.ThermalExpansion",
+                   "Negative thermal expansion coefficient — "
+                   "verify this is intentional.");
+}
+
+// ---------------------------------------------------------------------------
+// Model-driven range check
+// ---------------------------------------------------------------------------
+
+void MaterialValidator::checkBounds(const std::string& modelKey,
+                                    const std::string& propKey,
+                                    std::optional<double> value,
+                                    ValidationResult& r)
+{
+    if (!value.has_value()) return;
+
+    const std::string field = modelKey + "." + propKey;
+    const ModelStore& store = modelStore();
+
+    // Resolve property definition via ModelStore
+    // Try by model name first, then fall back to resolved properties
+    const MaterialModel* model = store.findByName(modelKey);
+    if (!model) return;  // unknown model — skip bounds check
+
+    // For composite models resolve through inheritance
+    auto props = store.resolvedProperties(model->getUuid());
+    auto it = props.find(propKey);
+    if (it == props.end()) return;  // property not in model
+
+    const PropertyDefinition& def = it->second;
+
+    if (def.minimum.has_value() && *value < *def.minimum) {
+        std::ostringstream msg;
+        msg << propKey << " value " << *value
+            << " is below minimum " << *def.minimum
+            << " (" << def.units << ").";
+        addError(r, field, msg.str());
+    }
+
+    if (def.maximum.has_value() && *value > *def.maximum) {
+        std::ostringstream msg;
+        msg << propKey << " value " << *value
+            << " exceeds maximum " << *def.maximum
+            << " (" << def.units << ").";
+        addError(r, field, msg.str());
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -176,14 +212,14 @@ void MaterialValidator::addError(ValidationResult& r,
                                  const std::string& field,
                                  const std::string& message)
 {
-    r.issues.push_back({ValidationIssue::Severity::Error, field, message});
+    r.issues.push_back({field, message, ValidationIssue::Severity::Error});
 }
 
 void MaterialValidator::addWarning(ValidationResult& r,
                                    const std::string& field,
                                    const std::string& message)
 {
-    r.issues.push_back({ValidationIssue::Severity::Warning, field, message});
+    r.issues.push_back({field, message, ValidationIssue::Severity::Warning});
 }
 
 } // namespace NeuMaterial::App
