@@ -21,6 +21,9 @@ set(NeuMaterialApp_HEADERS
     MaterialValidator.h
 )
 
+# Precompiled header (CMake 3.16+)
+target_precompile_headers(NeuMaterialApp PRIVATE PreCompiled.h)
+
 # ---------------------------------------------------------------------------
 # Shared library target
 # ---------------------------------------------------------------------------
@@ -29,9 +32,6 @@ add_library(NeuMaterialApp SHARED
     ${NeuMaterialApp_SOURCES}
     ${NeuMaterialApp_HEADERS}
 )
-
-# Precompiled header (CMake 3.16+)
-target_precompile_headers(NeuMaterialApp PRIVATE PreCompiled.h)
 
 # ---------------------------------------------------------------------------
 # Include directories
@@ -49,14 +49,11 @@ target_include_directories(NeuMaterialApp
 # Dependencies
 # ---------------------------------------------------------------------------
 
-# yaml-cpp — required for YAML I/O
-find_package(yaml-cpp REQUIRED)
-
 target_link_libraries(NeuMaterialApp
     PUBLIC
-        yaml-cpp::yaml-cpp
         FreeCADBase              # App::Application, Base::Console, etc.
     PRIVATE
+        FreeCAD::App
         ${PYTHON_LIBRARIES}
 )
 

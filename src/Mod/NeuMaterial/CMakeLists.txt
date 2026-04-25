@@ -18,7 +18,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(FreeCAD REQUIRED)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-find_package(yaml-cpp REQUIRED)
 
 # ---------------------------------------------------------------------------
 # Sub-directories
