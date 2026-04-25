@@ -2,9 +2,10 @@
 
 import FreeCAD
 import FreeCADGui
+from PySide6.QtWidgets import QMessageBox
 
 from ..ui.material_editor import MaterialEditorDialog
-from NeuMaterialApp import Material, store   # C++ bindings
+from NeuMaterialApp import materialStore
 
 
 class NewMaterialCommand:
@@ -13,7 +14,7 @@ class NewMaterialCommand:
     def GetResources(self):
         return {
             "Pixmap":   "new_material",
-            "MenuText": "New Material…",
+            "MenuText": "New Material\u2026",
             "ToolTip":  "Create a new material and add it to a user library.",
             "Accel":    "Ctrl+Shift+N",
         }
@@ -24,19 +25,19 @@ class NewMaterialCommand:
     def Activated(self):
         dlg = MaterialEditorDialog(
             parent=FreeCADGui.getMainWindow(),
-            material=None,       # None → create mode
+            material=None,  # create mode
         )
         if dlg.exec() != dlg.Accepted:
             return
 
         material, library_name = dlg.result()
         try:
-            store().addMaterial(material, library_name)
+            materialStore().addMaterial(material, library_name)
             FreeCAD.Console.PrintMessage(
-                f"NeuMaterial: created '{material.getName()}' in '{library_name}'\n"
+                f"NeuMaterial: created '{material.getName()}' "
+                f"in '{library_name}'\n"
             )
         except Exception as exc:
-            from PySide6.QtWidgets import QMessageBox
             QMessageBox.critical(
                 FreeCADGui.getMainWindow(),
                 "NeuMaterial",

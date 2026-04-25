@@ -4,9 +4,9 @@ import FreeCAD
 import FreeCADGui
 from PySide6.QtWidgets import QMessageBox
 
-from ..ui.material_editor import MaterialEditorDialog
+from ..ui.material_editor  import MaterialEditorDialog
 from ..ui.material_browser import MaterialBrowserPanel
-from NeuMaterialApp import store
+from NeuMaterialApp import materialStore
 
 
 class EditMaterialCommand:
@@ -15,7 +15,7 @@ class EditMaterialCommand:
     def GetResources(self):
         return {
             "Pixmap":   "edit_material",
-            "MenuText": "Edit Material…",
+            "MenuText": "Edit Material\u2026",
             "ToolTip":  "Edit the selected material's properties.",
         }
 
@@ -45,7 +45,7 @@ class EditMaterialCommand:
 
         updated, _library = dlg.result()
         try:
-            store().updateMaterial(updated)
+            materialStore().updateMaterial(updated)
             FreeCAD.Console.PrintMessage(
                 f"NeuMaterial: updated '{updated.getName()}'\n"
             )
@@ -56,13 +56,8 @@ class EditMaterialCommand:
                 f"Could not update material:\n{exc}",
             )
 
-    # ------------------------------------------------------------------
-
     @staticmethod
     def _selected_material():
-        """Return the material currently selected in the browser, or None."""
         mw = FreeCADGui.getMainWindow()
         browser = mw.findChild(MaterialBrowserPanel)
-        if browser:
-            return browser.selectedMaterial()
-        return None
+        return browser.selectedMaterial() if browser else None

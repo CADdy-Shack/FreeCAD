@@ -5,7 +5,7 @@ import FreeCADGui
 from PySide6.QtWidgets import QMessageBox
 
 from ..ui.material_browser import MaterialBrowserPanel
-from NeuMaterialApp import store
+from NeuMaterialApp import materialStore
 
 
 class DeleteMaterialCommand:
@@ -20,7 +20,6 @@ class DeleteMaterialCommand:
 
     def IsActive(self):
         mat = self._selected_material()
-        # Only active when a non-read-only material is selected
         return mat is not None and not mat.isReadOnly()
 
     def Activated(self):
@@ -35,12 +34,12 @@ class DeleteMaterialCommand:
             f"Permanently delete '{mat.getName()}'?\n\nThis cannot be undone.",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No,
-        )
+            )
         if confirm != QMessageBox.Yes:
             return
 
         try:
-            store().deleteMaterial(mat.getId())
+            materialStore().deleteMaterial(mat.getUuid())
             FreeCAD.Console.PrintMessage(
                 f"NeuMaterial: deleted '{mat.getName()}'\n"
             )

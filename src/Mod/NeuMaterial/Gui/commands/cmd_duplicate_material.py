@@ -5,7 +5,7 @@ import FreeCADGui
 from PySide6.QtWidgets import QInputDialog, QMessageBox
 
 from ..ui.material_browser import MaterialBrowserPanel
-from NeuMaterialApp import store
+from NeuMaterialApp import materialStore
 
 
 class DuplicateMaterialCommand:
@@ -14,7 +14,7 @@ class DuplicateMaterialCommand:
     def GetResources(self):
         return {
             "Pixmap":   "duplicate_material",
-            "MenuText": "Duplicate Material…",
+            "MenuText": "Duplicate Material\u2026",
             "ToolTip":  "Copy the selected material into a user library for editing.",
         }
 
@@ -30,9 +30,7 @@ class DuplicateMaterialCommand:
         if source is None:
             return
 
-        st = store()
-
-        # Collect user-writable libraries as target choices
+        st = materialStore()
         user_libs = [lib.name for lib in st.libraries() if not lib.readOnly]
         if not user_libs:
             QMessageBox.information(
@@ -43,30 +41,26 @@ class DuplicateMaterialCommand:
             return
 
         target_lib, ok = QInputDialog.getItem(
-            mw,
-            "Duplicate Material",
-            "Copy into library:",
-            user_libs,
-            0,
-            False,
+            mw, "Duplicate Material", "Copy into library:",
+            user_libs, 0, False,
         )
         if not ok:
             return
 
         new_name, ok = QInputDialog.getText(
-            mw,
-            "Duplicate Material",
-            "New material name:",
+            mw, "Duplicate Material", "New material name:",
             text=source.getName() + " (copy)",
         )
         if not ok or not new_name.strip():
             return
 
         try:
-            new_mat = st.duplicateMaterial(source.getId(), target_lib, new_name.strip())
+            new_mat = st.duplicateMaterial(
+                source.getUuid(), target_lib, new_name.strip()
+            )
             FreeCAD.Console.PrintMessage(
                 f"NeuMaterial: duplicated '{source.getName()}' "
-                f"→ '{new_mat.getName()}' in '{target_lib}'\n"
+                f"\u2192 '{new_mat.getName()}' in '{target_lib}'\n"
             )
             if browser:
                 browser.reload()
