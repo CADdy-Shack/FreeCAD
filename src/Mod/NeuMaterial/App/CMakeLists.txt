@@ -5,42 +5,57 @@ cmake_minimum_required(VERSION 3.18)
 # ---------------------------------------------------------------------------
 
 set(NeuMaterialApp_SOURCES
-    NeuMaterialApp.cpp
-    Material.cpp
-    MaterialStore.cpp
-    MaterialIO.cpp
-    MaterialValidator.cpp
+        NeuMaterialApp.cpp
+        Material.cpp
+        MaterialStore.cpp
+        MaterialIO.cpp
+        MaterialValidator.cpp
 )
 
 set(NeuMaterialApp_HEADERS
-    PreCompiled.h
-    NeuMaterialApp.h
-    Material.h
-    MaterialStore.h
-    MaterialIO.h
-    MaterialValidator.h
+        PreCompiled.h
+        NeuMaterialApp.h
+        Material.h
+        MaterialStore.h
+        MaterialIO.h
+        MaterialValidator.h
 )
 
-# Precompiled header (CMake 3.16+)
-target_precompile_headers(NeuMaterialApp PRIVATE PreCompiled.h)
+
+# ---------------------------------------------------------------------------
+# Generate Python bindings from .pyi descriptors
+# Uses FreeCAD's generate_from_py CMake function
+# ---------------------------------------------------------------------------
+
+set(NeuMaterialApp_PYI_SRCS
+        Material.pyi
+        MaterialStore.pyi
+        ModelStore.pyi
+)
+
+generate_from_py(NeuMaterialApp_PYI_SRCS NeuMaterialApp_PY_SRCS)
 
 # ---------------------------------------------------------------------------
 # Shared library target
 # ---------------------------------------------------------------------------
 
 add_library(NeuMaterialApp SHARED
-    ${NeuMaterialApp_SOURCES}
-    ${NeuMaterialApp_HEADERS}
+        ${NeuMaterialApp_SOURCES}
+        ${NeuMaterialApp_HEADERS}
+        ${NeuMaterialApp_PY_SRCS}
 )
+
+# Precompiled header (CMake 3.16+)
+target_precompile_headers(NeuMaterialApp PRIVATE PreCompiled.h)
 
 # ---------------------------------------------------------------------------
 # Include directories
 # ---------------------------------------------------------------------------
 
 target_include_directories(NeuMaterialApp
-    PUBLIC
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE
+        PRIVATE
         ${FreeCAD_SOURCE_DIR}/src        # FreeCAD base headers
         ${PYTHON_INCLUDE_DIRS}
 )
@@ -49,11 +64,14 @@ target_include_directories(NeuMaterialApp
 # Dependencies
 # ---------------------------------------------------------------------------
 
+# yaml-cpp — required for YAML I/O
+find_package(yaml-cpp REQUIRED)
+
 target_link_libraries(NeuMaterialApp
-    PUBLIC
+        PUBLIC
+        yaml-cpp::yaml-cpp
         FreeCADBase              # App::Application, Base::Console, etc.
-    PRIVATE
-        FreeCAD::App
+        PRIVATE
         ${PYTHON_LIBRARIES}
 )
 
@@ -74,10 +92,10 @@ endif()
 # ---------------------------------------------------------------------------
 
 install(TARGETS NeuMaterialApp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}   # Windows DLL
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}   # Windows DLL
 )
 
 install(FILES ${NeuMaterialApp_HEADERS}
-    DESTINATION include/NeuMaterial/App
+        DESTINATION include/NeuMaterial/App
 )
