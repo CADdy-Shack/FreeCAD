@@ -37,7 +37,14 @@ struct InheritedModel {
 // ---------------------------------------------------------------------------
 // MaterialModel
 //
-// Represents a single loaded Model .yml file.
+// Represents a single loaded Model or AppearanceModel .yml file.
+//
+// Physical models use the top-level key 'Model:' and live under
+// Resources/Models/ subdirectories (Mechanical/, Thermal/ etc.).
+//
+// Appearance models use the top-level key 'AppearanceModel:' and live
+// under Resources/Models/Appearance/.
+//
 // Composite models have an Inherited list and an empty properties map.
 // Granular models have no inherited entries and one or more properties.
 // ---------------------------------------------------------------------------
@@ -61,7 +68,8 @@ public:
     // ------------------------------------------------------------------
 
     const std::vector<InheritedModel>& inherited() const { return inherited_; }
-    bool isComposite() const { return !inherited_.empty(); }
+    bool isAppearanceModel() const { return appearanceModel_; }
+    bool isComposite()       const { return !inherited_.empty(); }
 
     // ------------------------------------------------------------------
     // Property definitions
@@ -93,6 +101,7 @@ private:
     std::string description_;
     std::string doi_;
 
+    bool                                      appearanceModel_ = false;
     std::vector<InheritedModel>               inherited_;
     std::map<std::string, PropertyDefinition> properties_;
 

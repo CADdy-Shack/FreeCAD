@@ -6,20 +6,28 @@ namespace NeuMaterial::App {
 
 // ---------------------------------------------------------------------------
 // AppearanceProperties
+//
+// Phong shading model matching FreeCAD's BasicRendering appearance model
+// (UUID: f006c7e4-35b7-43d5-bbf9-c5d572309e6e).
+//
+// PBR properties (Metallic, Roughness etc.) are reserved for a future
+// appearance model once the FreeCAD rendering situation is resolved.
 // ---------------------------------------------------------------------------
 struct AppearanceProperties {
-    std::array<float, 4> color       = {0.8f, 0.8f, 0.8f, 1.0f}; // RGBA 0–1
-    float                metallic    = 0.0f;  // 0 (dielectric) – 1 (metal)
-    float                opacity     = 1.0f;  // 0 (transparent) – 1 (opaque)
-    float                roughness   = 0.5f;  // 0 (smooth) – 1 (rough)
-    std::string          texturePath;         // path or empty
+    std::array<float, 4> ambientColor  = {0.20f, 0.20f, 0.20f, 1.0f}; // RGBA 0-1
+    std::array<float, 4> diffuseColor  = {0.80f, 0.80f, 0.80f, 1.0f}; // RGBA 0-1
+    std::array<float, 4> emissiveColor = {0.00f, 0.00f, 0.00f, 1.0f}; // RGBA 0-1
+    float                shininess     = 0.09f; // 0-1, higher = sharper highlights
+    std::array<float, 4> specularColor = {0.00f, 0.00f, 0.00f, 1.0f}; // RGBA 0-1
+    float                transparency  = 0.00f; // 0 (opaque) - 1 (transparent)
 
     bool operator==(const AppearanceProperties& o) const {
-        return color       == o.color
-            && metallic    == o.metallic
-            && opacity     == o.opacity
-            && roughness   == o.roughness
-            && texturePath == o.texturePath;
+        return ambientColor  == o.ambientColor
+            && diffuseColor  == o.diffuseColor
+            && emissiveColor == o.emissiveColor
+            && shininess     == o.shininess
+            && specularColor == o.specularColor
+            && transparency  == o.transparency;
     }
     bool operator!=(const AppearanceProperties& o) const { return !(*this == o); }
 };
@@ -137,9 +145,15 @@ public:
     // Model references
     // ------------------------------------------------------------------
 
+    // Physical model UUIDs (from Models: block)
     const std::vector<std::string>& modelUuids() const { return modelUuids_; }
-    void addModelUuid(std::string uuid) { modelUuids_.push_back(std::move(uuid)); }
-    void clearModelUuids()              { modelUuids_.clear(); }
+    void addModelUuid(std::string uuid)   { modelUuids_.push_back(std::move(uuid)); }
+    void clearModelUuids()                { modelUuids_.clear(); }
+
+    // Appearance model UUIDs (from AppearanceModels: block)
+    const std::vector<std::string>& appearanceModelUuids() const { return appearanceModelUuids_; }
+    void addAppearanceModelUuid(std::string uuid) { appearanceModelUuids_.push_back(std::move(uuid)); }
+    void clearAppearanceModelUuids()              { appearanceModelUuids_.clear(); }
 
     // ------------------------------------------------------------------
     // Property groups (nested structs — authoritative data)
@@ -173,6 +187,7 @@ public:
             && library_     == o.library_
             && license_     == o.license_
             && mechanical_  == o.mechanical_
+            && appearanceModelUuids_ == o.appearanceModelUuids_
             && modelUuids_  == o.modelUuids_
             && name_        == o.name_
             && tags_        == o.tags_
@@ -203,8 +218,11 @@ private:
     std::string library_;
     bool        readOnly_ = false;
 
-    // Models: block
+    // Models: block (physical)
     std::vector<std::string> modelUuids_;
+
+    // AppearanceModels: block
+    std::vector<std::string> appearanceModelUuids_;
 
     // Property data (a-z)
     AppearanceProperties appearance_;

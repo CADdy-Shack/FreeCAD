@@ -55,11 +55,11 @@ public:
     /// Save a Material to a .yaml file.
     /// Writes General: then Models: sorted a-z, with --- header and ... footer.
     /// The parent directory must already exist.
-    /// Throws std::runtime_error on a writing failure.
+    /// Throws std::runtime_error on write failure.
     static void save(const Material& material,
                      const std::filesystem::path& filePath);
 
-    /// Serialize a Material to a YAML string.
+    /// Serialise a Material to a YAML string.
     static std::string toString(const Material& material);
 
 private:
@@ -70,20 +70,23 @@ private:
     static void parseGeneral   (const YAML::Node& general,
                                 Material& mat,
                                 const std::string& source);
-    static void parseModels    (const YAML::Node& models,
-                                Material& mat);
-    static void parseLinearElastic  (const YAML::Node& node, Material& mat);
-    static void parseThermal        (const YAML::Node& node, Material& mat);
-    static void parseElectrical     (const YAML::Node& node, Material& mat);
-    static void parseRenderAppearance(const YAML::Node& node, Material& mat);
+    static void parseModels          (const YAML::Node& models,
+                                    Material& mat);
+    static void parseAppearanceModels(const YAML::Node& models,
+                                    Material& mat);
+    static void parseLinearElastic   (const YAML::Node& node, Material& mat);
+    static void parseThermal         (const YAML::Node& node, Material& mat);
+    static void parseElectrical      (const YAML::Node& node, Material& mat);
+    static void parseBasicRendering  (const YAML::Node& node, Material& mat);
 
     // Serialization helpers
-    static void emitGeneral (YAML::Emitter& out, const Material& mat);
-    static void emitModels  (YAML::Emitter& out, const Material& mat);
-    static void emitLinearElastic  (YAML::Emitter& out, const Material& mat);
-    static void emitThermal        (YAML::Emitter& out, const Material& mat);
-    static void emitElectrical     (YAML::Emitter& out, const Material& mat);
-    static void emitRenderAppearance(YAML::Emitter& out, const Material& mat);
+    static void emitAppearanceModels (YAML::Emitter& out, const Material& mat);
+    static void emitBasicRendering   (YAML::Emitter& out, const Material& mat);
+    static void emitElectrical       (YAML::Emitter& out, const Material& mat);
+    static void emitGeneral          (YAML::Emitter& out, const Material& mat);
+    static void emitLinearElastic    (YAML::Emitter& out, const Material& mat);
+    static void emitModels           (YAML::Emitter& out, const Material& mat);
+    static void emitThermal          (YAML::Emitter& out, const Material& mat);
 
     // Value parsing — extracts numeric value from 'value unit' string
     static std::optional<double> parseQuantity(const YAML::Node& node,

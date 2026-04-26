@@ -100,8 +100,9 @@ std::string MaterialIO::toString(const Material& material)
     out << YAML::BeginDoc;
     out << YAML::BeginMap;
 
-    emitGeneral(out, material);
-    emitModels (out, material);
+    emitGeneral          (out, material);
+    emitModels           (out, material);
+    emitAppearanceModels (out, material);
 
     out << YAML::EndMap;
     out << YAML::EndDoc;
@@ -119,13 +120,23 @@ Material MaterialIO::parseNode(const YAML::Node& root,
     if (!root["General"])
         throw std::runtime_error("Material YAML missing 'General:' block in "
                                  + source);
-    if (!root["Models"])
-        throw std::runtime_error("Material YAML missing 'Models:' block in "
-                                 + source);
 
     Material mat;
     parseGeneral(root["General"], mat, source);
-    parseModels (root["Models"],  mat);
+
+    // Physical models — optional (appearance-only materials omit this)
+    if (root["Models"] && !root["Models"].IsNull())
+        parseModels(root["Models"], mat);
+
+    // Appearance models — optional (physical-only materials omit this)
+    if (root["AppearanceModels"] && !root["AppearanceModels"].IsNull())
+        parseAppearanceModels(root["AppearanceModels"], mat);
+
+    if (mat.modelUuids().empty() && mat.appearanceModelUuids().empty())
+        throw std::runtime_error(
+            "Material YAML has neither 'Models:' nor 'AppearanceModels:' "
+            "in " + source);
+
     return mat;
 }
 
@@ -157,10 +168,9 @@ void MaterialIO::parseModels(const YAML::Node& models, Material& mat)
             mat.addModelUuid(node["UUID"].as<std::string>());
 
         // Dispatch to per-model parsers by key
-        if      (key == "LinearElastic")   parseLinearElastic   (node, mat);
-        else if (key == "Thermal")          parseThermal         (node, mat);
-        else if (key == "Electrical")       parseElectrical      (node, mat);
-        else if (key == "RenderAppearance") parseRenderAppearance(node, mat);
+        if      (key == "Electrical")    parseElectrical  (node, mat);
+        else if (key == "LinearElastic") parseLinearElastic(node, mat);
+        else if (key == "Thermal")       parseThermal      (node, mat);
         // Unknown model keys are stored as UUIDs only — forward compatible
     }
 }
@@ -192,20 +202,39 @@ void MaterialIO::parseElectrical(const YAML::Node& n, Material& mat)
     e.resistivity            = parseQuantity(n, "Resistivity");
 }
 
-void MaterialIO::parseRenderAppearance(const YAML::Node& n, Material& mat)
+void MaterialIO::parseAppearanceModels(const YAML::Node& models, Material& mat)
+{
+    for (const auto& entry : models) {
+        const std::string key      = entry.first.as<std::string>();
+        const YAML::Node& node     = entry.second;
+
+        if (node["UUID"] && !node["UUID"].IsNull())
+            mat.addAppearanceModelUuid(node["UUID"].as<std::string>());
+
+        if      (key == "BasicRendering") parseBasicRendering(node, mat);
+        // Unknown appearance model keys stored as UUIDs only — forward compatible
+    }
+}
+
+void MaterialIO::parseBasicRendering(const YAML::Node& n, Material& mat)
 {
     auto& a = mat.appearance();
 
-    if (n["Color"] && !n["Color"].IsNull()) {
-        std::array<float, 4> c = {0.8f, 0.8f, 0.8f, 1.0f};
-        if (parseColor(n["Color"].as<std::string>(), c))
-            a.color = c;
-    }
-    if (auto v = parseFloat(n, "Metallic"))    a.metallic    = *v;
-    if (auto v = parseFloat(n, "Opacity"))     a.opacity     = *v;
-    if (auto v = parseFloat(n, "Roughness"))   a.roughness   = *v;
-    if (n["TexturePath"] && !n["TexturePath"].IsNull())
-        a.texturePath = n["TexturePath"].as<std::string>();
+    std::array<float, 4> c = {0.0f, 0.0f, 0.0f, 1.0f};
+    if (n["AmbientColor"]  && !n["AmbientColor"].IsNull()
+        && parseColor(n["AmbientColor"].as<std::string>(),  c))
+        a.ambientColor = c;
+    if (n["DiffuseColor"]  && !n["DiffuseColor"].IsNull()
+        && parseColor(n["DiffuseColor"].as<std::string>(),  c))
+        a.diffuseColor = c;
+    if (n["EmissiveColor"] && !n["EmissiveColor"].IsNull()
+        && parseColor(n["EmissiveColor"].as<std::string>(), c))
+        a.emissiveColor = c;
+    if (n["SpecularColor"] && !n["SpecularColor"].IsNull()
+        && parseColor(n["SpecularColor"].as<std::string>(), c))
+        a.specularColor = c;
+    if (auto v = parseFloat(n, "Shininess"))     a.shininess    = *v;
+    if (auto v = parseFloat(n, "Transparency"))  a.transparency = *v;
 }
 
 // ---------------------------------------------------------------------------
@@ -241,18 +270,34 @@ void MaterialIO::emitGeneral(YAML::Emitter& out, const Material& mat)
 
 void MaterialIO::emitModels(YAML::Emitter& out, const Material& mat)
 {
+    // Skip entire Models: block if no physical properties set
+    const auto& m = mat.mechanical();
+    const auto& t = mat.thermal();
+    const auto& e = mat.electrical();
+    bool hasPhysical = m.density || m.poissonsRatio || m.ultimateStrength
+                    || m.yieldStrength || m.youngsModulus
+                    || t.meltingPoint || t.specificHeat
+                    || t.thermalConductivity || t.thermalExpansion
+                    || e.electricalConductivity || e.permittivity
+                    || e.resistivity;
+    if (!hasPhysical) return;
+
     out << YAML::Key << "Models" << YAML::Value << YAML::BeginMap;
+    // Sorted a-z
+    emitElectrical   (out, mat);
+    emitLinearElastic(out, mat);
+    emitThermal      (out, mat);
+    out << YAML::EndMap;
+}
 
-    // Emit models sorted a-z by key name
-    // Electrical
-    emitElectrical     (out, mat);
-    // LinearElastic
-    emitLinearElastic  (out, mat);
-    // RenderAppearance (only if any appearance properties set)
-    emitRenderAppearance(out, mat);
-    // Thermal
-    emitThermal        (out, mat);
+void MaterialIO::emitAppearanceModels(YAML::Emitter& out, const Material& mat)
+{
+    // Skip if appearance is all defaults
+    const AppearanceProperties defaults;
+    if (mat.appearance() == defaults) return;
 
+    out << YAML::Key << "AppearanceModels" << YAML::Value << YAML::BeginMap;
+    emitBasicRendering(out, mat);
     out << YAML::EndMap;
 }
 
@@ -312,35 +357,27 @@ void MaterialIO::emitElectrical(YAML::Emitter& out, const Material& mat)
     out << YAML::EndMap;
 }
 
-void MaterialIO::emitRenderAppearance(YAML::Emitter& out, const Material& mat)
+void MaterialIO::emitBasicRendering(YAML::Emitter& out, const Material& mat)
 {
     const auto& a = mat.appearance();
+    const std::string uuid = "f006c7e4-35b7-43d5-bbf9-c5d572309e6e";
 
-    // TODO: 'RenderAppearance' key name is provisional — the appearance model
-    // name may change once the relationship between the Material workbench and
-    // any rendering workbench is clarified. Treat as a marker for future work.
+    auto colorStr = [](const std::array<float,4>& c) -> std::string {
+        std::ostringstream ss;
+        ss << "(" << c[0] << ", " << c[1] << ", "
+                  << c[2] << ", " << c[3] << ")";
+        return ss.str();
+    };
 
-    // Only emit if any appearance property differs from defaults
-    const AppearanceProperties defaults;
-    if (a == defaults) return;
-
-    const std::string uuid = "3df55a7e-7c4d-4b6b-8b3a-5a5e6e7f8a9b";
-
-    out << YAML::Key << "RenderAppearance" << YAML::Value << YAML::BeginMap;
-
-    // Color as '(r, g, b, a)'
-    std::ostringstream color;
-    color << "(" << a.color[0] << ", " << a.color[1] << ", "
-                 << a.color[2] << ", " << a.color[3] << ")";
-    emitStr(out, "Color", color.str());
-
-    emitStr(out, "Metallic",  std::to_string(a.metallic));
-    emitStr(out, "Opacity",   std::to_string(a.opacity));
-    emitStr(out, "Roughness", std::to_string(a.roughness));
-    if (!a.texturePath.empty())
-        emitStr(out, "TexturePath", a.texturePath);
-    emitStr(out, "UUID", uuid);
-
+    out << YAML::Key << "BasicRendering" << YAML::Value << YAML::BeginMap;
+    // Properties sorted a-z
+    emitStr(out, "AmbientColor",  colorStr(a.ambientColor));
+    emitStr(out, "DiffuseColor",  colorStr(a.diffuseColor));
+    emitStr(out, "EmissiveColor", colorStr(a.emissiveColor));
+    emitStr(out, "Shininess",     std::to_string(a.shininess));
+    emitStr(out, "SpecularColor", colorStr(a.specularColor));
+    emitStr(out, "Transparency",  std::to_string(a.transparency));
+    emitStr(out, "UUID",          uuid);
     out << YAML::EndMap;
 }
 
