@@ -5,26 +5,32 @@ cmake_minimum_required(VERSION 3.18)
 # ---------------------------------------------------------------------------
 
 set(NeuMaterialApp_SOURCES
-        NeuMaterialApp.cpp
         Material.cpp
-        MaterialStore.cpp
         MaterialIO.cpp
+        MaterialModel.cpp
+        MaterialPyImp.cpp
+        MaterialStore.cpp
+        MaterialStorePyImp.cpp
         MaterialValidator.cpp
+        ModelStore.cpp
+        ModelStorePyImp.cpp
+        NeuMaterialApp.cpp
 )
 
 set(NeuMaterialApp_HEADERS
-        PreCompiled.h
-        NeuMaterialApp.h
         Material.h
-        MaterialStore.h
         MaterialIO.h
+        MaterialModel.h
+        MaterialStore.h
         MaterialValidator.h
+        ModelStore.h
+        NeuMaterialApp.h
+        PreCompiled.h
 )
-
 
 # ---------------------------------------------------------------------------
 # Generate Python bindings from .pyi descriptors
-# Uses FreeCAD's generate_from_py CMake function
+# Uses FreeCAD's generate_from_py() CMake function
 # ---------------------------------------------------------------------------
 
 set(NeuMaterialApp_PYI_SRCS
@@ -56,7 +62,7 @@ target_include_directories(NeuMaterialApp
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         PRIVATE
-        ${FreeCAD_SOURCE_DIR}/src        # FreeCAD base headers
+        ${FreeCAD_SOURCE_DIR}/src
         ${PYTHON_INCLUDE_DIRS}
 )
 
@@ -64,13 +70,12 @@ target_include_directories(NeuMaterialApp
 # Dependencies
 # ---------------------------------------------------------------------------
 
-# yaml-cpp — required for YAML I/O
 find_package(yaml-cpp REQUIRED)
 
 target_link_libraries(NeuMaterialApp
         PUBLIC
         yaml-cpp::yaml-cpp
-        FreeCADBase              # App::Application, Base::Console, etc.
+        FreeCADBase
         PRIVATE
         ${PYTHON_LIBRARIES}
 )
@@ -93,7 +98,7 @@ endif()
 
 install(TARGETS NeuMaterialApp
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}   # Windows DLL
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(FILES ${NeuMaterialApp_HEADERS}
