@@ -2,8 +2,6 @@
 
 #include "PreCompiled.h"
 #include "Material.h"
-#include "MaterialModel.h"
-#include "ModelStore.h"
 
 namespace NeuMaterial::App {
 
