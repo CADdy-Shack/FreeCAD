@@ -8,7 +8,6 @@ General:
     URL: 'https://wikipedia.org/wiki/Aluminum'
     UUID: '5f6a7b8c-9d0e-4f1a-2b3c-4d5e6f7a8b9c'
     Version: '2.0'
-
 Models:
     Electrical:
         ElectricalConductivity: '19600000 S/m'
@@ -27,3 +26,12 @@ Models:
         ThermalConductivity: '130 W/m/K'
         ThermalExpansion: '23.4 um/m/K'
         UUID: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
+AppearanceModels:
+    BasicRendering:
+        UUID: 'f006c7e4-35b7-43d5-bbf9-c5d572309e6e'
+        AmbientColor: '(0.2400, 0.2400, 0.2500, 1.0000)'
+        DiffuseColor: '(0.7800, 0.7800, 0.8200, 1.0000)'
+        EmissiveColor: '(0.0000, 0.0000, 0.0000, 1.0000)'
+        Shininess: '0.4000'
+        SpecularColor: '(0.3800, 0.3800, 0.3800, 1.0000)'
+        Transparency: '0.0000'

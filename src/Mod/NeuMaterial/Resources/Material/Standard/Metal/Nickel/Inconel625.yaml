@@ -26,3 +26,12 @@ Models:
         ThermalConductivity: '9.8 W/m/K'
         ThermalExpansion: '12.8 um/m/K'
         UUID: 'b2eb5f48-74d4-4f01-a8f0-5ecf7c3e65a4'
+AppearanceModels:
+    BasicRendering:
+        AmbientColor: '(0.2100, 0.2000, 0.1900, 1.0000)'
+        DiffuseColor: '(0.7000, 0.6800, 0.6200, 1.0000)'
+        EmissiveColor: '(0.0000, 0.0000, 0.0000, 1.0000)'
+        Shininess: '0.3000'
+        SpecularColor: '(0.3000, 0.3000, 0.2500, 1.0000)'
+        Transparency: '0.0000'
+        UUID: 'f006c7e4-35b7-43d5-bbf9-c5d572309e6e'
