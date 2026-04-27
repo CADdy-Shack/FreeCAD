@@ -1,7 +1,7 @@
 <!-- Include a brief summary of the changes. -->
 
 <!--
-The FreeCAD community thanks you for your contribution!
+The CADdy-Shack FreeCAD community thanks you for your contribution!
 By creating a Pull Request you agree to the contributing policy. The complete policy can be found in the root of the source tree (CONTRIBUTING.md) or at https://github.com/FreeCAD/FreeCAD/blob/main/CONTRIBUTING.md
 
 This template provides guidance on creating a PR that can be reviewed and approved as quickly as possible. Comments may be safely deleted.
