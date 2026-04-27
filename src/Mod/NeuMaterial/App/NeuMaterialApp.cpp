@@ -43,7 +43,7 @@ void initializeApp()
 
     // ModelStore must be initialized first — MaterialValidator and
     // MaterialIO depend on it being ready before any material is loaded.
-    modelStore().initialise(resourcesPath / "Models");
+    modelStore().initialize(resourcesPath / "Models");
 
     // MaterialStore second — loads material YAMLs which reference model UUIDs
     materialStore().initialize(resourcesPath);

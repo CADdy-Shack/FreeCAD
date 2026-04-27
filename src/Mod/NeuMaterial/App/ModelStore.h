@@ -34,7 +34,7 @@ public:
 
     /// Load all .yml files from modelsRootPath (Resources/Models/) recursively.
     /// Safe to call multiple times — clears and reloads each time.
-    void initialise(const fs::path& modelsRootPath);
+    void initialize(const fs::path& modelsRootPath);
 
     // ------------------------------------------------------------------
     // Queries
@@ -49,7 +49,7 @@ public:
     /// All loaded models, ordered by name.
     std::vector<const MaterialModel*> allModels() const;
 
-    /// Returns true if the store has been successfully initialised.
+    /// Returns true if the store has been successfully initialized.
     bool isReady() const { return ready_; }
 
     // ------------------------------------------------------------------

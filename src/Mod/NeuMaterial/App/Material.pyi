@@ -131,25 +131,32 @@ class Material(BaseClass):
     """Electrical resistivity in Ohm·m."""
 
     # ------------------------------------------------------------------
-    # Appearance properties (read-write)
+    # Appearance properties — Phong / BasicRendering model (read-write)
     # ------------------------------------------------------------------
 
-    Color: List[float] = ...
-    """Surface color as [R, G, B, A] with components in [0.0, 1.0].
+    AmbientColor: List[float] = ...
+    """Color of the surface under indirect uniform lighting as [R, G, B, A].
     Accepts 3-component [R, G, B] list; alpha defaults to 1.0."""
 
-    Metallic: float = ...
-    """PBR metallic factor: 0.0 = dielectric, 1.0 = conductor."""
+    DiffuseColor: List[float] = ...
+    """Base color of the surface when illuminated by light as [R, G, B, A].
+    Accepts 3-component [R, G, B] list; alpha defaults to 1.0."""
 
-    Opacity: float = ...
-    """Opacity: 0.0 = fully transparent, 1.0 = fully opaque."""
+    EmissiveColor: List[float] = ...
+    """Color the surface appears to emit as [R, G, B, A].
+    Set to black [0,0,0,1] for no emission."""
 
-    Roughness: float = ...
-    """PBR roughness: 0.0 = mirror-smooth, 1.0 = fully diffuse."""
+    Shininess: float = ...
+    """Size and sharpness of specular highlights in [0.0, 1.0].
+    Higher values produce smaller, sharper highlights."""
 
-    TexturePath: str = ...
-    """Path to a texture image file, or empty string if none."""
+    SpecularColor: List[float] = ...
+    """Color of mirror-like highlights as [R, G, B, A].
+    Accepts 3-component [R, G, B] list; alpha defaults to 1.0."""
 
+    Transparency: float = ...
+    """Transparency in [0.0, 1.0]: 0.0 = opaque, 1.0 = fully transparent."""
+    
     # ------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------

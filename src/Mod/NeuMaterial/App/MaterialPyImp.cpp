@@ -15,12 +15,7 @@ using namespace NeuMaterial::App;
 // ---------------------------------------------------------------------------
 
 static const std::vector<std::string> APPEARANCE_UUIDS = {
-    "3df55a7e-7c4d-4b6b-8b3a-5a5e6e7f8a9b",  // RenderAppearance
-    "f2c3d5f7-3d4e-4a6f-7b8c-9d0e1f2a3b4c",  // Color
-    "b4e5f7b9-5f6a-4c8b-9d0e-1f2a3b4c5d6e",  // Metallic
-    "c5f6a8ca-6a7b-4d9c-0e1f-2a3b4c5d6e7f",  // Opacity
-    "a3d4e6a8-4e5f-4b7a-8c9d-0e1f2a3b4c5d",  // Roughness
-    "d6a7b9db-7b8c-4e0d-1f2a-3b4c5d6e7f8a",  // TexturePath
+    "f006c7e4-35b7-43d5-bbf9-c5d572309e6e",  // BasicRendering
 };
 
 static bool isAppearanceUuid(const std::string& uuid)
@@ -338,69 +333,90 @@ void MaterialPy::setResistivity(Py::Object v)
 }
 
 // ---------------------------------------------------------------------------
-// Appearance properties
+// Appearance properties — Phong / BasicRendering model
 // ---------------------------------------------------------------------------
 
-Py::List MaterialPy::getColor() const
+namespace {
+// Helper to convert std::array<float,4> to a Python list
+Py::List colorToList(const std::array<float, 4>& c)
 {
-    const auto& c = getMaterialPtr()->appearance().color;
     Py::List list;
     for (float f : c)
         list.append(Py::Float(static_cast<double>(f)));
     return list;
 }
-void MaterialPy::setColor(Py::List v)
+
+// Helper to set std::array<float,4> from a Python list [R,G,B] or [R,G,B,A]
+void listToColor(Py::List v, std::array<float, 4>& c)
 {
-    auto& c = getMaterialPtr()->appearance().color;
     if (v.size() == 3) {
-        c[0] = static_cast<float>(Py::Float(v[0]));
-        c[1] = static_cast<float>(Py::Float(v[1]));
-        c[2] = static_cast<float>(Py::Float(v[2]));
-        c[3] = 1.0f;
+        c = { static_cast<float>(Py::Float(v[0])),
+              static_cast<float>(Py::Float(v[1])),
+              static_cast<float>(Py::Float(v[2])),
+              1.0f };
     } else if (v.size() == 4) {
-        c[0] = static_cast<float>(Py::Float(v[0]));
-        c[1] = static_cast<float>(Py::Float(v[1]));
-        c[2] = static_cast<float>(Py::Float(v[2]));
-        c[3] = static_cast<float>(Py::Float(v[3]));
+        c = { static_cast<float>(Py::Float(v[0])),
+              static_cast<float>(Py::Float(v[1])),
+              static_cast<float>(Py::Float(v[2])),
+              static_cast<float>(Py::Float(v[3])) };
     } else {
         throw Py::ValueError("Color must be a list of 3 or 4 floats");
     }
 }
+} // anonymous namespace
 
-Py::Float MaterialPy::getMetallic() const
+Py::List MaterialPy::getAmbientColor() const
 {
-    return Py::Float(getMaterialPtr()->appearance().metallic);
+    return colorToList(getMaterialPtr()->appearance().ambientColor);
 }
-void MaterialPy::setMetallic(Py::Float v)
+void MaterialPy::setAmbientColor(Py::List v)
 {
-    getMaterialPtr()->appearance().metallic = static_cast<float>(v);
-}
-
-Py::Float MaterialPy::getOpacity() const
-{
-    return Py::Float(getMaterialPtr()->appearance().opacity);
-}
-void MaterialPy::setOpacity(Py::Float v)
-{
-    getMaterialPtr()->appearance().opacity = static_cast<float>(v);
+    listToColor(v, getMaterialPtr()->appearance().ambientColor);
 }
 
-Py::Float MaterialPy::getRoughness() const
+Py::List MaterialPy::getDiffuseColor() const
 {
-    return Py::Float(getMaterialPtr()->appearance().roughness);
+    return colorToList(getMaterialPtr()->appearance().diffuseColor);
 }
-void MaterialPy::setRoughness(Py::Float v)
+void MaterialPy::setDiffuseColor(Py::List v)
 {
-    getMaterialPtr()->appearance().roughness = static_cast<float>(v);
+    listToColor(v, getMaterialPtr()->appearance().diffuseColor);
 }
 
-Py::String MaterialPy::getTexturePath() const
+Py::List MaterialPy::getEmissiveColor() const
 {
-    return Py::String(getMaterialPtr()->appearance().texturePath);
+    return colorToList(getMaterialPtr()->appearance().emissiveColor);
 }
-void MaterialPy::setTexturePath(Py::String v)
+void MaterialPy::setEmissiveColor(Py::List v)
 {
-    getMaterialPtr()->appearance().texturePath = v.as_std_string("utf-8");
+    listToColor(v, getMaterialPtr()->appearance().emissiveColor);
+}
+
+Py::Float MaterialPy::getShininess() const
+{
+    return Py::Float(getMaterialPtr()->appearance().shininess);
+}
+void MaterialPy::setShininess(Py::Float v)
+{
+    getMaterialPtr()->appearance().shininess = static_cast<float>(v);
+}
+
+Py::List MaterialPy::getSpecularColor() const
+{
+    return colorToList(getMaterialPtr()->appearance().specularColor);
+}
+void MaterialPy::setSpecularColor(Py::List v)
+{
+    listToColor(v, getMaterialPtr()->appearance().specularColor);
+}
+
+Py::Float MaterialPy::getTransparency() const
+{
+    return Py::Float(getMaterialPtr()->appearance().transparency);
+}
+void MaterialPy::setTransparency(Py::Float v)
+{
+    getMaterialPtr()->appearance().transparency = static_cast<float>(v);
 }
 
 // ---------------------------------------------------------------------------

@@ -70,36 +70,36 @@ public:
     // Unit conversion — Density
     // ------------------------------------------------------------------
 
-    static double gcm3_to_kgm3 (double v) { return v * 1e3;       }
-    static double kgm3_to_gcm3 (double v) { return v * 1e-3;      }
-    static double kgm3_to_lbin3(double v) { return v * 3.6127e-5; }
-    static double lbin3_to_kgm3(double v) { return v / 3.6127e-5; }
+    static double gcm3_to_kgm3 (const double v) { return v * 1e3;       }
+    static double kgm3_to_gcm3 (const double v) { return v * 1e-3;      }
+    static double kgm3_to_lbin3(const double v) { return v * 3.6127e-5; }
+    static double lbin3_to_kgm3(const double v) { return v / 3.6127e-5; }
 
     // ------------------------------------------------------------------
     // Unit conversion — Pressure / Modulus / Strength
     // ------------------------------------------------------------------
 
-    static double GPa_to_MPa(double v) { return v * 1e3;      }
-    static double ksi_to_MPa(double v) { return v * 6.89476;  }
-    static double MPa_to_GPa(double v) { return v * 1e-3;     }
-    static double MPa_to_psi(double v) { return v * 145.038;  }
-    static double psi_to_MPa(double v) { return v / 145.038;  }
+    static double GPa_to_MPa(const double v) { return v * 1e3;      }
+    static double ksi_to_MPa(const double v) { return v * 6.89476;  }
+    static double MPa_to_GPa(const double v) { return v * 1e-3;     }
+    static double MPa_to_psi(const double v) { return v * 145.038;  }
+    static double psi_to_MPa(const double v) { return v / 145.038;  }
 
     // ------------------------------------------------------------------
     // Unit conversion — Temperature
     // ------------------------------------------------------------------
 
-    static double C_to_F(double v) { return v * 9.0 / 5.0 + 32.0; }
-    static double C_to_K(double v) { return v + 273.15;            }
-    static double F_to_C(double v) { return (v - 32.0) * 5.0 / 9.0; }
-    static double K_to_C(double v) { return v - 273.15;            }
+    static double C_to_F(const double v) { return v * 9.0 / 5.0 + 32.0; }
+    static double C_to_K(const double v) { return v + 273.15;            }
+    static double F_to_C(const double v) { return (v - 32.0) * 5.0 / 9.0; }
+    static double K_to_C(const double v) { return v - 273.15;            }
 
     // ------------------------------------------------------------------
     // Unit conversion — Thermal conductivity
     // ------------------------------------------------------------------
 
-    static double BTU_to_WmK(double v) { return v / 0.57778; }
-    static double WmK_to_BTU(double v) { return v * 0.57778; }
+    static double BTU_to_WmK(const double v) { return v / 0.57778; }
+    static double WmK_to_BTU(const double v) { return v * 0.57778; }
 
 private:
     // Per-model-group validators

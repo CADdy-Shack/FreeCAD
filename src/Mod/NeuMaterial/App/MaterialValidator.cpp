@@ -77,24 +77,32 @@ void MaterialValidator::validateAppearance(const Material& mat,
 {
     const auto& a = mat.appearance();
 
-    auto inRange = [](float v) { return v >= 0.0f && v <= 1.0f; };
+    auto inRange01f = [](float v) { return v >= 0.0F && v <= 1.0F; };
 
-    for (int i = 0; i < 4; ++i) {
-        if (!inRange(a.color[i])) {
-            addError(r, "RenderAppearance.Color",
-                     "Color RGBA components must each be in [0.0, 1.0].");
-            break;
+    // Validate all four color arrays — each component must be in [0.0, 1.0]
+    struct ColorCheck { const char* field; const std::array<float,4>* color; };
+    const ColorCheck checks[] = {
+        { "BasicRendering.AmbientColor",  &a.ambientColor  },
+        { "BasicRendering.DiffuseColor",  &a.diffuseColor  },
+        { "BasicRendering.EmissiveColor", &a.emissiveColor },
+        { "BasicRendering.SpecularColor", &a.specularColor },
+    };
+    for (const auto& check : checks) {
+        for (int i = 0; i < 4; ++i) {
+            if (!inRange01f((*check.color)[i])) {
+                addError(r, check.field,
+                         std::string(check.field)
+                         + " RGBA components must each be in [0.0, 1.0].");
+                break;
+            }
         }
     }
-    if (!inRange(a.metallic))
-        addError(r, "RenderAppearance.Metallic",
-                 "Metallic must be in [0.0, 1.0].");
-    if (!inRange(a.opacity))
-        addError(r, "RenderAppearance.Opacity",
-                 "Opacity must be in [0.0, 1.0].");
-    if (!inRange(a.roughness))
-        addError(r, "RenderAppearance.Roughness",
-                 "Roughness must be in [0.0, 1.0].");
+
+    // Float properties bounded by model Minimum/Maximum
+    checkBounds("BasicRendering", "Shininess",
+                std::optional<double>(a.shininess), r);
+    checkBounds("BasicRendering", "Transparency",
+                std::optional<double>(a.transparency), r);
 }
 
 void MaterialValidator::validateElectrical(const Material& mat,
@@ -110,10 +118,11 @@ void MaterialValidator::validateElectrical(const Material& mat,
                 e.resistivity, r);
 
     // Cross-field: conductivity and resistivity should be reciprocals
+    constexpr auto allowed_deviation = 0.05F;
     if (e.electricalConductivity.has_value() && e.resistivity.has_value()
         && *e.electricalConductivity > 0.0 && *e.resistivity > 0.0) {
         double product = *e.electricalConductivity * *e.resistivity;
-        if (std::abs(product - 1.0) > 0.05)
+        if (std::abs(product - 1.0) > allowed_deviation)
             addWarning(r, "Electrical.Resistivity",
                        "ElectricalConductivity x Resistivity deviates from "
                        "1.0 by more than 5% — check consistency.");
@@ -170,7 +179,7 @@ void MaterialValidator::checkBounds(const std::string& modelKey,
                                     std::optional<double> value,
                                     ValidationResult& r)
 {
-    if (!value.has_value()) return;
+    if (!value.has_value()) { return; }
 
     const std::string field = modelKey + "." + propKey;
     const ModelStore& store = modelStore();
