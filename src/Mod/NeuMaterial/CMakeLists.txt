@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 cmake_minimum_required(VERSION 3.18)
 project(NeuMaterial VERSION 0.1.0 LANGUAGES CXX)
 
@@ -5,9 +6,9 @@ project(NeuMaterial VERSION 0.1.0 LANGUAGES CXX)
 # Global settings
 # ---------------------------------------------------------------------------
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ---------------------------------------------------------------------------
@@ -16,15 +17,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set FreeCAD_DIR or FreeCAD_SOURCE_DIR on the cmake command line if needed.
 # ---------------------------------------------------------------------------
 
-find_package(FreeCAD REQUIRED)
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+#find_package(FreeCAD REQUIRED)
+#find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 # ---------------------------------------------------------------------------
 # Sub-directories
 # ---------------------------------------------------------------------------
 
 add_subdirectory(App)
-add_subdirectory(Gui)
+if(BUILD_GUI)
+    add_subdirectory(Gui)
+endif (BUILD_GUI)
 
 # ---------------------------------------------------------------------------
 # Install Python packages (Init.py, InitGui.py, commands, ui)
